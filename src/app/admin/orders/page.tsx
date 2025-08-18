@@ -47,6 +47,8 @@ interface Order {
   orderNumber: string;
   customerId: string;
   customerEmail: string;
+  customerName: string;
+  customerPhone: string;
   restaurant: Restaurant;
   totalAmount: number;
   status: 'pending' | 'confirmed' | 'preparing' | 'ready' | 'out_for_delivery' | 'delivered' | 'cancelled';
@@ -404,11 +406,11 @@ export default function AdminOrdersPage() {
                         
                         <td className="px-6 py-4">
                           <div>
-                            <p className="font-medium text-gray-900">{order.deliveryAddress.name}</p>
-                            <p className="text-sm text-gray-600">{order.customerEmail}</p>
+                            <p className="font-medium text-gray-900">{order.customerName || order.deliveryAddress.name}</p>
+                            <p className="text-sm text-gray-600">{order.customerEmail || 'No email'}</p>
                             <p className="text-sm text-gray-600 flex items-center">
                               <Phone className="h-3 w-3 mr-1" />
-                              {order.deliveryAddress.phone}
+                              {order.customerPhone || order.deliveryAddress.phone}
                             </p>
                           </div>
                         </td>
@@ -537,9 +539,9 @@ export default function AdminOrdersPage() {
                   <div>
                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Customer Information</h3>
                     <div className="text-sm space-y-1">
-                      <p><span className="text-gray-600">Name:</span> <span className="ml-2">{selectedOrder.deliveryAddress.name}</span></p>
-                      <p><span className="text-gray-600">Email:</span> <span className="ml-2">{selectedOrder.customerEmail}</span></p>
-                      <p><span className="text-gray-600">Phone:</span> <span className="ml-2">{selectedOrder.deliveryAddress.phone}</span></p>
+                      <p><span className="text-gray-600">Name:</span> <span className="ml-2">{selectedOrder.customerName || selectedOrder.deliveryAddress.name}</span></p>
+                      <p><span className="text-gray-600">Email:</span> <span className="ml-2">{selectedOrder.customerEmail || 'Not provided'}</span></p>
+                      <p><span className="text-gray-600">Phone:</span> <span className="ml-2">{selectedOrder.customerPhone || selectedOrder.deliveryAddress.phone}</span></p>
                       <p><span className="text-gray-600">Address:</span> <span className="ml-2">
                         {selectedOrder.deliveryAddress.street}, {selectedOrder.deliveryAddress.city}, 
                         {selectedOrder.deliveryAddress.state} - {selectedOrder.deliveryAddress.pincode}
@@ -556,11 +558,19 @@ export default function AdminOrdersPage() {
                           <div>
                             <p className="font-medium">{item.name}</p>
                             <p className="text-sm text-gray-600">Qty: {item.quantity}</p>
+                            {item.customizations && item.customizations.length > 0 && (
+                              <p className="text-xs text-gray-500">
+                                Customizations: {item.customizations.join(', ')}
+                              </p>
+                            )}
                           </div>
-                          <p className="font-semibold">{formatCurrency(item.price)}</p>
+                          <div className="text-right">
+                            <p className="font-semibold">{formatCurrency(item.price)}</p>
+                            <p className="text-sm text-gray-600">Total: {formatCurrency(item.price * item.quantity)}</p>
+                          </div>
                         </div>
                       ))}
-                      <div className="flex justify-between items-center pt-2 font-bold text-lg">
+                      <div className="flex justify-between items-center pt-2 font-bold text-lg border-t border-gray-200">
                         <span>Total:</span>
                         <span className="text-red-600">{formatCurrency(selectedOrder.totalAmount)}</span>
                       </div>

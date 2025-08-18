@@ -98,12 +98,33 @@ export async function POST(request: NextRequest) {
       addresses: user.addresses
     };
 
-    return NextResponse.json({
+    // Create response and set HTTP-only cookies for middleware/auth
+    const response = NextResponse.json({
       success: true,
       message: user.googleId === googleId ? 'Successfully logged in with Google' : 'Account created and logged in with Google',
       token,
       user: userData
     });
+
+    const isProd = process.env.NODE_ENV === 'production';
+
+    response.cookies.set('token', token, {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7, // 7 days
+    });
+
+    response.cookies.set('user', JSON.stringify(userData), {
+      httpOnly: true,
+      secure: isProd,
+      sameSite: 'lax',
+      path: '/',
+      maxAge: 60 * 60 * 24 * 7,
+    });
+
+    return response;
 
   } catch (error: any) {
     console.error('Google OAuth error:', error);

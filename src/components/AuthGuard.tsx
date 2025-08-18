@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { Loader2 } from 'lucide-react';
+import { checkAuthState, redirectToLogin } from '@/lib/utils/auth';
 
 interface AuthGuardProps {
   children: React.ReactNode;
@@ -17,48 +18,54 @@ export default function AuthGuard({ children, fallback }: AuthGuardProps) {
 
   useEffect(() => {
     const checkAuth = () => {
-      const token = localStorage.getItem('token');
-      const user = localStorage.getItem('user');
-      const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-      const isGuest = localStorage.getItem('guest') === 'true';
+      const authState = checkAuthState();
       
-      // Allow both authenticated users (with token) and guest users
-      const authenticated = !!((token && user && isLoggedIn) || (isGuest && user && isLoggedIn));
-      setIsAuthenticated(authenticated);
+      console.log('AuthGuard check:', {
+        token: !!authState.token,
+        user: !!authState.user,
+        isAuthenticated: authState.isAuthenticated,
+        isGuest: authState.isGuest,
+        pathname
+      });
+      
+      setIsAuthenticated(authState.isAuthenticated);
       setIsLoading(false);
 
-      if (!authenticated) {
-        // Redirect to login with current page as redirect parameter
-        const redirectUrl = encodeURIComponent(pathname);
-        router.push(`/login?redirect=${redirectUrl}`);
+      if (!authState.isAuthenticated) {
+        console.log('User not authenticated, redirecting to login');
+        redirectToLogin();
       }
     };
 
-    checkAuth();
+    // Initial check with a slight delay to allow for Google login completion
+    const initialCheck = setTimeout(() => {
+      checkAuth();
+    }, 100);
 
     // Listen for auth state changes
     const handleStorageChange = (e: StorageEvent) => {
       if (e.key === 'isLoggedIn' || e.key === 'token' || e.key === 'user') {
-        checkAuth();
+        console.log('Storage changed:', e.key, e.newValue);
+        // Add a small delay to ensure storage is fully updated
+        setTimeout(() => {
+          checkAuth();
+        }, 50);
       }
     };
 
     const handleAuthStateChange = (e: CustomEvent) => {
-      const { isLoggedIn, user } = e.detail;
-      // Check if user is guest or authenticated
-      const isGuest = user?.isGuest || localStorage.getItem('guest') === 'true';
-      const authenticated = isLoggedIn && (user || localStorage.getItem('user'));
-      setIsAuthenticated(authenticated);
-      if (!authenticated) {
-        const redirectUrl = encodeURIComponent(pathname);
-        router.push(`/login?redirect=${redirectUrl}`);
-      }
+      console.log('Auth state changed:', e.detail);
+      // Add a small delay to ensure storage is fully updated
+      setTimeout(() => {
+        checkAuth();
+      }, 100);
     };
 
     window.addEventListener('storage', handleStorageChange);
     window.addEventListener('authStateChanged', handleAuthStateChange as EventListener);
 
     return () => {
+      clearTimeout(initialCheck);
       window.removeEventListener('storage', handleStorageChange);
       window.removeEventListener('authStateChanged', handleAuthStateChange as EventListener);
     };

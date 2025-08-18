@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/backend/database';
 import User from '@/lib/backend/models/user.model';
-import Order from '@/lib/backend/models/order.model';
 import ChefBooking from '@/lib/backend/models/chefBooking.model';
-import { verifyToken } from '@/lib/backend/utils/jwt';
+import { verifyToken } from '@/lib/backend/middleware/auth';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
@@ -29,6 +28,12 @@ export async function GET(request: NextRequest) {
       );
     }
 
+    // Count pending general requests visible to all chefs
+    const pendingGeneralRequests = await ChefBooking.countDocuments({
+      chefId: null,
+      status: 'pending_chef_assignment'
+    });
+
     const stats = {
       chef: {
         name: chef.name,
@@ -40,10 +45,10 @@ export async function GET(request: NextRequest) {
         priceRange: chef.chefProfile?.priceRange || { min: 0, max: 0, currency: 'INR' }
       },
       stats: {
-        pendingRequests: 0, // Will be calculated from bookings
+        pendingRequests: pendingGeneralRequests,
         completedEvents: chef.chefProfile?.performance?.completedEvents || 0,
         rating: chef.chefProfile?.rating || 5.0,
-        earnings: 0 // Will be calculated from completed bookings
+        earnings: 0
       }
     };
 

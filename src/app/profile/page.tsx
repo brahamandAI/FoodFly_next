@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import AuthGuard from '@/components/AuthGuard';
+import { checkAuthState, redirectToLogin } from '@/lib/utils/auth';
 
 interface ChefBooking {
   _id: string;
@@ -30,13 +31,13 @@ interface ChefBooking {
     cuisine: string[];
     specialRequests?: string;
   };
-  chef: {
+  chef?: {
     id: string;
     name: string;
     email: string;
     phone: string;
     rating: number;
-  };
+  } | null;
   pricing: {
     totalAmount: number;
     currency: string;
@@ -56,7 +57,8 @@ interface UserProfile {
   name: string;
   email: string;
   phone?: string;
-  joinedAt: string;
+  joinedAt?: string;
+  createdAt?: string;
 }
 
 export default function ProfilePage() {
@@ -73,17 +75,22 @@ export default function ProfilePage() {
 
   const loadUserProfile = async () => {
     try {
-      const token = localStorage.getItem('token');
-      if (!token) {
+      const authState = checkAuthState();
+      
+      if (!authState.isAuthenticated) {
+        console.log('Profile: No authentication found', authState);
         toast.error('Please login to view your profile');
-        window.location.href = '/login';
+        redirectToLogin();
         return;
       }
 
-      const userData = localStorage.getItem('user');
-      if (userData) {
-        const parsedUser = JSON.parse(userData);
-        setUser(parsedUser);
+      if (authState.user) {
+        const profileData: UserProfile = authState.user;
+        // Fallback: if joinedAt not present, use createdAt
+        if (!profileData?.joinedAt && (authState.user as any)?.createdAt) {
+          profileData.joinedAt = (authState.user as any).createdAt;
+        }
+        setUser(profileData);
       }
     } catch (error) {
       console.error('Error loading user profile:', error);
@@ -96,30 +103,30 @@ export default function ProfilePage() {
   const loadChefBookings = async () => {
     try {
       setBookingsLoading(true);
-      const token = localStorage.getItem('token');
-      if (!token) {
+      const authState = checkAuthState();
+      
+      if (!authState.isAuthenticated) {
+        console.log('Profile: No authentication found for bookings', authState);
         return;
       }
 
-      const response = await fetch('/api/chef-services/book', {
+      const response = await fetch('/api/chef-services/bookings', {
         headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+          'Authorization': `Bearer ${authState.token}`,
+          'Content-Type': 'application/json',
+        },
       });
 
       if (response.ok) {
         const data = await response.json();
-        setChefBookings(data.data.bookings || []);
-      } else if (response.status === 401) {
-        toast.error('Please login to view your bookings');
-        window.location.href = '/login';
+        setChefBookings(data.bookings || []);
       } else {
-        throw new Error('Failed to load bookings');
+        console.error('Failed to load chef bookings');
+        setChefBookings([]);
       }
     } catch (error) {
       console.error('Error loading chef bookings:', error);
-      toast.error('Failed to load chef bookings');
+      setChefBookings([]);
     } finally {
       setBookingsLoading(false);
     }
@@ -198,7 +205,7 @@ export default function ProfilePage() {
                 <p className="text-gray-300">{user?.email}</p>
                 {user?.phone && <p className="text-gray-300">{user.phone}</p>}
                 <p className="text-sm text-gray-400 mt-2">
-                  Member since {user?.joinedAt ? new Date(user.joinedAt).toLocaleDateString() : 'N/A'}
+                  Member since {user?.joinedAt || user?.createdAt ? new Date((user?.joinedAt || user?.createdAt) as string).toLocaleDateString() : 'N/A'}
                 </p>
               </div>
             </div>
@@ -229,7 +236,7 @@ export default function ProfilePage() {
               {activeTab === 'bookings' && (
                 <div>
                   <div className="flex justify-between items-center mb-6">
-                    <h3 className="text-2xl font-bold text-gray-900">Your Chef Booking Requests</h3>
+                    <h3 className="text-2xl font-bold text-white">Your Chef Booking Requests</h3>
                     <button
                       onClick={() => window.location.href = '/chef-services'}
                       className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-3 rounded-xl font-bold hover:from-orange-600 hover:to-red-600 transform hover:scale-105 transition-all duration-200 shadow-lg"
@@ -241,7 +248,7 @@ export default function ProfilePage() {
                   {bookingsLoading ? (
                     <div className="text-center py-12">
                       <Loader className="h-8 w-8 animate-spin text-orange-500 mx-auto mb-4" />
-                      <p className="text-gray-600">Loading your bookings...</p>
+                      <p className="text-gray-300">Loading your bookings...</p>
                     </div>
                   ) : chefBookings.length > 0 ? (
                     <div className="space-y-6">
@@ -299,27 +306,31 @@ export default function ProfilePage() {
 
                                 <div>
                                   <h5 className="font-semibold text-gray-900 mb-3">Chef Details</h5>
-                                  <div className="space-y-2 text-sm text-gray-600">
-                                    <div className="flex items-center space-x-2">
-                                      <ChefHat className="h-4 w-4 text-orange-500" />
-                                      <span className="font-medium">{booking.chef.name}</span>
+                                  {booking.chef ? (
+                                    <div className="space-y-2 text-sm text-gray-600">
+                                      <div className="flex items-center space-x-2">
+                                        <ChefHat className="h-4 w-4 text-orange-500" />
+                                        <span className="font-medium">{booking.chef.name}</span>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <Star className="h-4 w-4 text-yellow-500" />
+                                        <span>{(booking.chef.rating ?? 5).toFixed?.(1) || Number(booking.chef.rating ?? 5).toFixed(1)} rating</span>
+                                      </div>
+                                      <div className="flex items-center space-x-2">
+                                        <DollarSign className="h-4 w-4 text-green-500" />
+                                        <span className="font-bold text-lg text-green-600">
+                                          ₹{booking.pricing.totalAmount.toLocaleString()}
+                                        </span>
+                                      </div>
                                     </div>
-                                    <div className="flex items-center space-x-2">
-                                      <Star className="h-4 w-4 text-yellow-500" />
-                                      <span>{booking.chef.rating.toFixed(1)} rating</span>
-                                    </div>
-                                    <div className="flex items-center space-x-2">
-                                      <DollarSign className="h-4 w-4 text-green-500" />
-                                      <span className="font-bold text-lg text-green-600">
-                                        ₹{booking.pricing.totalAmount.toLocaleString()}
-                                      </span>
-                                    </div>
-                                  </div>
-
-                                  {booking.bookingDetails.specialRequests && (
-                                    <div className="mt-4">
-                                      <h6 className="font-medium text-gray-700 text-xs uppercase tracking-wide mb-1">Special Requests</h6>
-                                      <p className="text-sm text-gray-600 italic">{booking.bookingDetails.specialRequests}</p>
+                                  ) : (
+                                    <div className="space-y-2 text-sm">
+                                      <p className="text-gray-700 font-medium">Awaiting chef acceptance</p>
+                                      <p className="text-gray-600">Your request is visible to available chefs. The first to accept will be assigned.</p>
+                                      <div className="flex items-center space-x-2">
+                                        <DollarSign className="h-4 w-4 text-green-500" />
+                                        <span className="font-bold text-green-600">Estimated total: ₹{booking.pricing.totalAmount.toLocaleString()}</span>
+                                      </div>
                                     </div>
                                   )}
                                 </div>
@@ -329,7 +340,7 @@ export default function ProfilePage() {
                               <div className="mt-4 p-4 rounded-lg bg-gray-50">
                                 {booking.status === 'pending' && (
                                   <p className="text-sm text-yellow-700 font-medium">
-                                    ⏳ Waiting for chef confirmation. You'll be notified once the chef responds to your request.
+                                    ⏳ Waiting for chef confirmation. You'll be notified once a chef accepts your request.
                                   </p>
                                 )}
                                 {booking.status === 'confirmed' && (
@@ -354,7 +365,7 @@ export default function ProfilePage() {
                                 )}
                                 {booking.status === 'completed' && (
                                   <p className="text-sm text-blue-700 font-medium">
-                                    🎉 Event completed! We hope you had a wonderful experience with your chef.
+                                    🎉 Event completed! We hope you had a wonderful experience.
                                   </p>
                                 )}
                               </div>

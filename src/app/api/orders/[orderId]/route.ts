@@ -42,21 +42,8 @@ export async function GET(
       );
     }
 
-    // Fetch order with populated fields
-    const order = await Order.findById(orderId)
-      .populate({
-        path: 'restaurant',
-        select: 'name image phone address'
-      })
-      .populate({
-        path: 'items.menuItem',
-        select: 'name price image isVeg description category'
-      })
-      .populate({
-        path: 'deliveryPartner',
-        select: 'name phone vehicleNumber'
-      })
-      .lean();
+    // Fetch order
+    const order = await Order.findById(orderId).lean();
 
     if (!order) {
       return NextResponse.json(
@@ -66,43 +53,48 @@ export async function GET(
     }
 
     // Check if user owns this order or is admin
-    if (order.user.toString() !== decoded.userId && decoded.role !== 'admin') {
+    // Use customerId instead of user field
+    if (order.customerId !== decoded.userId && decoded.role !== 'admin') {
       return NextResponse.json(
         { error: 'Access denied' },
         { status: 403 }
       );
     }
 
-    // Format the response
+    // Format the response to match the actual order structure
     const formattedOrder = {
       _id: order._id,
       orderNumber: order.orderNumber,
       restaurant: {
-        _id: order.restaurant._id,
-        name: order.restaurant.name,
-        image: order.restaurant.image,
-        phone: order.restaurant.phone,
-        address: order.restaurant.address
+        _id: order.restaurantId || 'default-restaurant',
+        name: order.restaurantName || 'FoodFly Kitchen',
+        image: '/images/restaurants/cafe.jpg', // Default image
+        phone: '+91 9876543210', // Default phone
+        address: {
+          street: 'Main Street',
+          city: 'Your City',
+          area: 'Food District'
+        }
       },
       items: order.items.map((item: any) => ({
         _id: item._id,
         menuItem: {
-          _id: item.menuItem._id,
-          name: item.menuItem.name,
-          price: item.menuItem.price,
-          image: item.menuItem.image,
-          isVeg: item.menuItem.isVeg,
-          description: item.menuItem.description,
-          category: item.menuItem.category
+          _id: item.menuItemId || item._id,
+          name: item.name,
+          price: item.price,
+          image: '/images/placeholder.svg', // Default image
+          isVeg: true, // Default value
+          description: item.description,
+          category: 'Main Course' // Default category
         },
         quantity: item.quantity,
         price: item.price,
-        customization: item.customization
+        customization: item.customizations ? item.customizations.join(', ') : ''
       })),
       status: order.status,
       totalAmount: order.totalAmount,
-      deliveryFee: order.deliveryFee,
-      tax: order.tax,
+      deliveryFee: order.deliveryFee || 0,
+      tax: order.taxes || 0,
       subtotal: order.subtotal,
       paymentMethod: order.paymentMethod,
       paymentStatus: order.paymentStatus,
@@ -114,12 +106,7 @@ export async function GET(
       review: order.review,
       createdAt: order.createdAt,
       cancelledAt: order.cancelledAt,
-      deliveryPartner: order.deliveryPartner ? {
-        _id: order.deliveryPartner._id,
-        name: order.deliveryPartner.name,
-        phone: order.deliveryPartner.phone,
-        vehicleNumber: order.deliveryPartner.vehicleNumber
-      } : null
+      deliveryPartner: null // Not implemented yet
     };
 
     return NextResponse.json({

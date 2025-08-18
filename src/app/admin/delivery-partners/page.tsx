@@ -71,89 +71,66 @@ export default function AdminDeliveryPartnersPage() {
     try {
       setLoading(true);
       
-      // Mock data with Indian context
-      const mockPartners: DeliveryPartner[] = [
-        {
-          _id: '1',
-          name: 'Rajesh Kumar',
-          phone: '+91 9876543210',
-          email: 'rajesh.kumar@foodfly.com',
-          profilePhoto: undefined,
-          deliveryProfile: {
-            vehicleType: 'bike',
-            vehicleNumber: 'DL01AB1234',
-            currentZone: 'Connaught Place, Delhi',
-            isVerified: true,
-            isActive: true,
-            totalDeliveries: 247,
-            totalEarnings: 89650,
-            rating: 4.8,
-            availability: { status: 'online' },
-            joinedAt: '2023-06-15',
-            lastActiveAt: new Date().toISOString()
-          }
-        },
-        {
-          _id: '2',
-          name: 'Amit Singh',
-          phone: '+91 9123456789',
-          email: 'amit.singh@foodfly.com',
-          deliveryProfile: {
-            vehicleType: 'scooter',
-            vehicleNumber: 'UP16CD5678',
-            currentZone: 'Sector 18, Noida',
-            isVerified: true,
-            isActive: true,
-            totalDeliveries: 189,
-            totalEarnings: 67500,
-            rating: 4.6,
-            availability: { status: 'busy' },
-            joinedAt: '2023-08-20',
-            lastActiveAt: new Date(Date.now() - 30 * 60000).toISOString()
-          }
-        },
-        {
-          _id: '3',
-          name: 'Priya Sharma',
-          phone: '+91 9988776655',
-          email: 'priya.sharma@foodfly.com',
-          deliveryProfile: {
-            vehicleType: 'bicycle',
-            vehicleNumber: 'N/A',
-            currentZone: 'Cyber City, Gurgaon',
-            isVerified: false,
-            isActive: false,
-            totalDeliveries: 45,
-            totalEarnings: 15750,
-            rating: 4.2,
-            availability: { status: 'offline' },
-            joinedAt: '2024-01-10',
-            lastActiveAt: new Date(Date.now() - 2 * 60 * 60000).toISOString()
-          }
-        }
-      ];
-
-      setPartners(mockPartners);
+      // Get admin token
+      const token = localStorage.getItem('adminToken');
       
-      // Calculate stats
-      const totalPartners = mockPartners.length;
-      const onlineCount = mockPartners.filter(p => p.deliveryProfile.availability.status === 'online').length;
-      const busyCount = mockPartners.filter(p => p.deliveryProfile.availability.status === 'busy').length;
-      const offlineCount = mockPartners.filter(p => p.deliveryProfile.availability.status === 'offline').length;
-      const verifiedCount = mockPartners.filter(p => p.deliveryProfile.isVerified).length;
-      const avgRating = mockPartners.reduce((sum, p) => sum + p.deliveryProfile.rating, 0) / totalPartners;
-      const totalDeliveries = mockPartners.reduce((sum, p) => sum + p.deliveryProfile.totalDeliveries, 0);
-      const totalEarnings = mockPartners.reduce((sum, p) => sum + p.deliveryProfile.totalEarnings, 0);
+      if (!token) {
+        toast.error('Admin authentication required');
+        return;
+      }
 
+      // Fetch real delivery partners from API
+      const response = await fetch('/api/admin/delivery-partners', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (!response.ok) {
+        throw new Error(`Failed to load delivery partners: ${response.status}`);
+      }
+
+      const data = await response.json();
+      const realPartners = data.deliveryPartners || [];
+      const summary = data.summary || {};
+
+      // Map API response to component interface
+      const mappedPartners: DeliveryPartner[] = realPartners.map((partner: any) => ({
+        _id: partner._id,
+        name: partner.name,
+        phone: partner.phone,
+        email: partner.email,
+        profilePhoto: partner.profilePhoto,
+        deliveryProfile: {
+          vehicleType: partner.deliveryProfile?.vehicleType || 'bike',
+          vehicleNumber: partner.deliveryProfile?.vehicleNumber || 'N/A',
+          currentZone: partner.deliveryProfile?.currentZone || 'Unknown',
+          isVerified: partner.deliveryProfile?.isVerified || false,
+          isActive: partner.deliveryProfile?.isActive || false,
+          totalDeliveries: partner.deliveryProfile?.performance?.completedDeliveries || 0,
+          totalEarnings: partner.deliveryProfile?.performance?.totalEarnings || 0,
+          rating: partner.deliveryProfile?.rating || 0,
+          availability: {
+            status: partner.deliveryProfile?.availability?.status || 'offline'
+          },
+          joinedAt: partner.deliveryProfile?.joinedAt || partner.createdAt,
+          lastActiveAt: partner.deliveryProfile?.availability?.lastStatusUpdate || partner.createdAt
+        }
+      }));
+
+      setPartners(mappedPartners);
+      
+      // Set stats from API response
       setStats({
-        total: totalPartners,
-        online: onlineCount,
-        offline: offlineCount,
-        busy: busyCount,
-        verified: verifiedCount,
-        avgRating: Math.round(avgRating * 10) / 10,
-        totalDeliveries,
-        totalEarnings
+        total: summary.totalPartners || 0,
+        online: summary.onlinePartners || 0,
+        offline: (summary.totalPartners || 0) - (summary.onlinePartners || 0) - (summary.busyPartners || 0),
+        busy: summary.busyPartners || 0,
+        verified: summary.verifiedPartners || 0,
+        avgRating: 4.5, // Calculate from partners if needed
+        totalDeliveries: summary.totalDeliveries || 0,
+        totalEarnings: (summary.totalDeliveries || 0) * 50 // Assuming ₹50 per delivery
       });
 
     } catch (error) {
@@ -189,6 +166,43 @@ export default function AdminDeliveryPartnersPage() {
       case 'busy': return <Clock className="h-4 w-4" />;
       case 'offline': return <XCircle className="h-4 w-4" />;
       default: return <AlertTriangle className="h-4 w-4" />;
+    }
+  };
+
+  const handlePartnerAction = async (partnerId: string, action: string) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      
+      if (!token) {
+        toast.error('Admin authentication required');
+        return;
+      }
+
+      const response = await fetch('/api/admin/delivery-partners', {
+        method: 'PUT',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          partnerId,
+          action
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to update partner');
+      }
+
+      const result = await response.json();
+      toast.success(result.message || 'Partner updated successfully');
+      
+      // Refresh the data
+      fetchDeliveryPartners();
+      
+    } catch (error) {
+      console.error('Error updating partner:', error);
+      toast.error('Failed to update partner');
     }
   };
 
@@ -484,6 +498,38 @@ export default function AdminDeliveryPartnersPage() {
                         >
                           <Phone className="h-4 w-4" />
                         </a>
+                        
+                        {/* Action Buttons */}
+                        {!partner.deliveryProfile.isVerified && (
+                          <button 
+                            onClick={() => handlePartnerAction(partner._id, 'verify')}
+                            className="text-yellow-600 hover:text-yellow-800 transition-colors"
+                            title="Verify Partner"
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </button>
+                        )}
+                        
+                        {!partner.deliveryProfile.isActive && (
+                          <button 
+                            onClick={() => handlePartnerAction(partner._id, 'activate')}
+                            className="text-green-600 hover:text-green-800 transition-colors"
+                            title="Activate Partner"
+                          >
+                            <Activity className="h-4 w-4" />
+                          </button>
+                        )}
+                        
+                        {partner.deliveryProfile.isActive && (
+                          <button 
+                            onClick={() => handlePartnerAction(partner._id, 'deactivate')}
+                            className="text-red-600 hover:text-red-800 transition-colors"
+                            title="Deactivate Partner"
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </button>
+                        )}
+                        
                         <button className="text-gray-600 hover:text-gray-800 transition-colors">
                           <MoreVertical className="h-4 w-4" />
                         </button>

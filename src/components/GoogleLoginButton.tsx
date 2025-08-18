@@ -1,8 +1,9 @@
 'use client';
 
+import React, { useState } from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { toast } from 'react-hot-toast';
-import { useState } from 'react';
+import { refreshAuthState } from '@/lib/utils/auth';
 
 interface GoogleLoginButtonProps {
   onSuccess: () => void;
@@ -69,16 +70,42 @@ export default function GoogleLoginButton({
       document.cookie = `token=${data.token}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
       document.cookie = `user=${JSON.stringify(data.user)}; path=/; max-age=${7 * 24 * 60 * 60}; SameSite=Lax`;
 
-      // Trigger auth state change events
-      window.dispatchEvent(new CustomEvent('authStateChanged', {
-        detail: { isLoggedIn: true, user: data.user }
-      }));
+      // Debug: Log what we're setting
+      console.log('🔐 Google login - Setting cookies:', {
+        token: data.token ? 'SET' : 'MISSING',
+        user: data.user ? 'SET' : 'MISSING',
+        tokenLength: data.token?.length || 0
+      });
 
-      // Trigger storage event for header update
-      window.dispatchEvent(new StorageEvent('storage', {
-        key: 'isLoggedIn',
-        newValue: 'true'
-      }));
+      // Trigger auth state change events with a slight delay to ensure storage is set
+      setTimeout(() => {
+        // Trigger storage event for header update
+        window.dispatchEvent(new StorageEvent('storage', {
+          key: 'isLoggedIn',
+          newValue: 'true'
+        }));
+
+        // Additional event to ensure all components are notified
+        window.dispatchEvent(new CustomEvent('authStateChanged', {
+          detail: { isLoggedIn: true, user: data.user, source: 'google' }
+        }));
+
+        // Force refresh auth state to ensure all components are updated
+        refreshAuthState();
+
+        // Debug: Check if cookies are set
+        console.log('🔍 Google login - Checking cookies after set:', {
+          tokenCookie: document.cookie.includes('token='),
+          userCookie: document.cookie.includes('user='),
+          allCookies: document.cookie
+        });
+
+        // Force a page reload to ensure all components pick up the new auth state
+        const currentPath = window.location.pathname;
+        if (currentPath === '/login' || currentPath === '/') {
+          window.location.reload();
+        }
+      }, 200);
 
       // Migrate guest cart and load user cart from database
       try {

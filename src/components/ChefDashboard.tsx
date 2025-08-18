@@ -257,13 +257,15 @@ export default function ChefDashboard() {
       const token = localStorage.getItem('chef-token');
       
       if (token) {
-        await fetch('/api/auth/chef-logout', {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${token}`,
-            'Content-Type': 'application/json'
-          }
-        });
+        try {
+          await fetch('/api/auth/chef-logout', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            }
+          });
+        } catch {}
       }
 
       // Clear all chef-specific localStorage data
@@ -272,12 +274,23 @@ export default function ChefDashboard() {
       localStorage.removeItem('chef-userType');
       localStorage.removeItem('chef-sessionId');
 
+      // Also clear any customer session remnants
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('isLoggedIn');
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('isLoggedIn');
+
+      // Clear cookies hint for client-side accessible ones
+      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+
       toast.success('Logged out successfully');
-      window.location.href = '/chef/login';
+      window.location.href = '/';
     } catch (error) {
       console.error('Logout error:', error);
       localStorage.clear();
-      window.location.href = '/chef/login';
+      window.location.href = '/';
     }
   };
 

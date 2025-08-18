@@ -1158,28 +1158,56 @@ export const getCurrentUser = () => {
 
 export const logout = () => {
   try {
+    // Try to invalidate server session (customer)
+    const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || sessionStorage.getItem('token')) : null;
+    if (typeof window !== 'undefined') {
+      try {
+        if (token) {
+          fetch('/api/auth/user-logout', {
+            method: 'POST',
+            headers: { 'Authorization': `Bearer ${token}` },
+          }).catch(() => {});
+        }
+      } catch {}
+    }
+
     // Clear localStorage
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    localStorage.removeItem('userEmail');
-    localStorage.removeItem('isLoggedIn');
-    localStorage.removeItem('guest');
-    
-    // Clear sessionStorage
-    sessionStorage.removeItem('token');
-    sessionStorage.removeItem('user');
-    sessionStorage.removeItem('isLoggedIn');
-    
-    // Clear cookies
-    document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
-    document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      localStorage.removeItem('user');
+      localStorage.removeItem('userEmail');
+      localStorage.removeItem('isLoggedIn');
+      localStorage.removeItem('guest');
+
+      // Clear sessionStorage
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
+      sessionStorage.removeItem('isLoggedIn');
+
+      // Clear cookies
+      document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+    }
     
     // Clear axios headers
     delete axiosInstance.defaults.headers.Authorization;
-    
+
+    // Dispatch auth state change
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new CustomEvent('authStateChanged', { detail: { isLoggedIn: false, user: null, source: 'logout' } }));
+    }
+
     console.log('Logout completed - cleared all auth data');
+
+    // Redirect to home page
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   } catch (error) {
     console.error('Logout error:', error);
+    if (typeof window !== 'undefined') {
+      window.location.href = '/';
+    }
   }
 };
 
@@ -2448,6 +2476,102 @@ export const adminApi = {
     } catch (error: any) {
       console.error('Error updating user status:', error);
       throw new Error(error.response?.data?.error || 'Failed to update user status');
+    }
+  },
+
+  // Get all chefs
+  getAllChefs: async (params?: { status?: string; specialization?: string; verified?: string; page?: number; limit?: number }) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) throw new Error('Admin authentication required');
+      
+      const searchParams = new URLSearchParams();
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined) searchParams.append(key, value.toString());
+        });
+      }
+      
+      const response = await axiosInstance.get(`/api/admin/chefs?${searchParams.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching chefs:', error);
+      throw new Error(error.response?.data?.error || 'Failed to fetch chefs');
+    }
+  },
+
+  // Update chef status
+  updateChefStatus: async (chefId: string, action: string, updates?: any) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) throw new Error('Admin authentication required');
+      
+      const response = await axiosInstance.put(`/api/admin/chefs`, 
+        { chefId, action, updates },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error updating chef status:', error);
+      throw new Error(error.response?.data?.error || 'Failed to update chef status');
+    }
+  },
+
+  // Get all chef bookings
+  getAllChefBookings: async (params?: { status?: string; chefId?: string; customerId?: string; page?: number; limit?: number }) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) throw new Error('Admin authentication required');
+      
+      const searchParams = new URLSearchParams();
+      if (params) {
+        Object.entries(params).forEach(([key, value]) => {
+          if (value !== undefined) searchParams.append(key, value.toString());
+        });
+      }
+      
+      const response = await axiosInstance.get(`/api/admin/chef-bookings?${searchParams.toString()}`, {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error fetching chef bookings:', error);
+      throw new Error(error.response?.data?.error || 'Failed to fetch chef bookings');
+    }
+  },
+
+  // Update chef booking status
+  updateChefBookingStatus: async (bookingId: string, action: string, updates?: any) => {
+    try {
+      const token = localStorage.getItem('adminToken');
+      if (!token) throw new Error('Admin authentication required');
+      
+      const response = await axiosInstance.put(`/api/admin/chef-bookings`, 
+        { bookingId, action, updates },
+        {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }
+      );
+      
+      return response.data;
+    } catch (error: any) {
+      console.error('Error updating chef booking status:', error);
+      throw new Error(error.response?.data?.error || 'Failed to update chef booking status');
     }
   }
 };

@@ -25,52 +25,36 @@ export default function ClientLayout({
   useEffect(() => {
     // Initialize test data for development/testing
     initializeTestData();
-    
-    // Clear any invalid authentication tokens
-    clearInvalidAuth();
-    
-    // Check authentication status without forcing login popup
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    const isGuest = localStorage.getItem('guest') === 'true';
-    const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
-    
-    const authenticated = !!((token && userData) || (isGuest && userData && isLoggedIn));
-    setIsAuthenticated(authenticated);
-    setIsLoading(false);
 
-    // Ensure authentication tokens are set in cookies for middleware access
-    if (authenticated) {
-      ensureAuthInCookies();
-    }
+    // Ensure auth present in cookies for middleware
+    ensureAuthInCookies();
 
-    // Set up periodic check to maintain authentication cookies
-    const authCheckInterval = setInterval(() => {
-      if (isAuthenticated) {
-        ensureAuthInCookies();
+    const checkAuth = () => {
+      try {
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        const auth = localStorage.getItem('isLoggedIn') === 'true';
+        if (token && user && auth) {
+          setIsAuthenticated(true);
+        } else {
+          clearInvalidAuth();
+          setIsAuthenticated(false);
+        }
+      } catch {
+        setIsAuthenticated(false);
+      } finally {
+        setIsLoading(false);
       }
-    }, 30000); // Check every 30 seconds
+    };
 
-    // Show auth popup if trying to access protected route without authentication
-    if (!authenticated && PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
-      setShowAuthPopup(true);
-      return;
-    }
+    checkAuth();
 
-    // Listen for auth state changes
+    // Periodic auth re-check (every 30s)
+    const authCheckInterval = setInterval(checkAuth, 30000);
+
     const handleAuthChange = (e: CustomEvent) => {
-      const { isLoggedIn } = e.detail;
-      setIsAuthenticated(isLoggedIn);
-      
-      // Ensure cookies are updated when auth state changes
-      if (isLoggedIn) {
-        ensureAuthInCookies();
-      }
-      
-      // If user just logged out and is on protected route, redirect to home
-      if (!isLoggedIn && PROTECTED_ROUTES.some(route => pathname.startsWith(route))) {
-        router.push('/');
-      }
+      const { isLoggedIn } = e.detail || {};
+      setIsAuthenticated(!!isLoggedIn);
     };
 
     window.addEventListener('authStateChanged', handleAuthChange as EventListener);
@@ -79,7 +63,7 @@ export default function ClientLayout({
       window.removeEventListener('authStateChanged', handleAuthChange as EventListener);
       clearInterval(authCheckInterval);
     };
-  }, [pathname, router, isAuthenticated]);
+  }, []);
 
   const handleCloseAuthPopup = () => {
     setShowAuthPopup(false);
@@ -117,7 +101,7 @@ export default function ClientLayout({
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
-      <main>
+      <main className="mobile-padding mobile-padding-y">
         {children}
       </main>
       <Footer />

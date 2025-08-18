@@ -60,6 +60,7 @@ function BookChefPageContent() {
   const [step, setStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [selectedChef, setSelectedChef] = useState<any>(null);
+  const [userPhone, setUserPhone] = useState<string>('');
   
   // Form data
   const [eventDetails, setEventDetails] = useState<EventDetails>({
@@ -119,17 +120,25 @@ function BookChefPageContent() {
   ];
 
   const eventTypeMapping = {
-    'birthday': 'private_dining',
-    'anniversary': 'private_dining', 
-    'wedding': 'catering',
-    'corporate': 'catering',
-    'family_gathering': 'private_dining',
-    'other': 'private_dining'
+    'birthday': 'birthday_party',
+    'anniversary': 'anniversary_celebration', 
+    'wedding': 'wedding_catering',
+    'corporate': 'corporate_event',
+    'family_gathering': 'family_gathering',
+    'other': 'custom_event'
   };
 
   useEffect(() => {
     if (preferredChefId) {
       loadChefDetails(preferredChefId);
+    }
+    // Initialize phone from stored user
+    const userStr = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
+    if (userStr) {
+      try {
+        const u = JSON.parse(userStr);
+        if (u?.phone) setUserPhone(u.phone);
+      } catch {}
     }
   }, [preferredChefId]);
 
@@ -161,31 +170,67 @@ function BookChefPageContent() {
         return;
       }
 
-      // Check if user has phone number in profile
+      // Ensure user has phone number; if missing, update profile first
       const userStr = localStorage.getItem('user');
+      let needsPhoneUpdate = false;
+      let currentUser: any = null;
       if (userStr) {
+        try { currentUser = JSON.parse(userStr); } catch {}
+      }
+      
+      // Check if user has phone number in profile
+      const hasPhoneInProfile = currentUser?.phone && currentUser.phone.trim().length >= 10;
+      const hasPhoneInForm = userPhone && userPhone.trim().length >= 10;
+      
+      if (!hasPhoneInProfile) {
+        if (!hasPhoneInForm) {
+          toast.error('Please enter a valid contact number (minimum 10 digits)');
+          return;
+        }
+        needsPhoneUpdate = true;
+      }
+      
+      if (needsPhoneUpdate) {
         try {
-          const user = JSON.parse(userStr);
-          if (!user.phone) {
-            toast.error('Please update your profile with a phone number before booking a chef');
+          console.log('Updating user phone number:', userPhone.trim());
+          const upd = await fetch('/api/users/profile', {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ phone: userPhone.trim() })
+          });
+          if (upd.ok) {
+            const updData = await upd.json();
+            const updatedUser = { ...(currentUser || {}), ...updData.user };
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            console.log('Phone number updated successfully:', updatedUser.phone);
+          } else {
+            const errorData = await upd.json();
+            console.error('Phone update failed:', errorData);
+            toast.error('Failed to save phone number: ' + (errorData.error || 'Unknown error'));
             return;
           }
-        } catch (error) {
-          console.error('Error parsing user data:', error);
+        } catch (e) {
+          console.error('Phone update error', e);
+          toast.error('Failed to save phone number');
+          return;
         }
       }
 
-      // Validate required fields before sending
+      // Check if we have a specific chef selected
       const chefId = preferredChefId || selectedChef?._id;
+      
+      // If no chef is selected, we'll make a general request
       if (!chefId) {
-        toast.error('Please select a chef to book');
-        return;
-      }
-
-      // Check if selected chef has required details
-      if (selectedChef && !selectedChef.phone) {
-        toast.error('Selected chef does not have a phone number. Please choose another chef or contact support.');
-        return;
+        console.log('No specific chef selected - creating general request');
+      } else {
+        // Check if selected chef has required details
+        if (selectedChef && !selectedChef.phone) {
+          toast.error('Selected chef does not have a phone number. Please choose another chef or contact support.');
+          return;
+        }
       }
 
       if (!eventDetails.type) {
@@ -207,8 +252,8 @@ function BookChefPageContent() {
       }
 
       if (eventDetails.cuisine.length === 0) {
-        toast.error('Please select at least one cuisine');
-        return;
+        // Make cuisine optional - set default if none selected
+        eventDetails.cuisine = ['Indian']; // Default cuisine
       }
 
       // Validate duration and guest count
@@ -240,8 +285,12 @@ function BookChefPageContent() {
         timeOnly: eventTimeOnly
       });
 
+      // Determine which API endpoint to use based on whether a specific chef is selected
+      const isGeneralRequest = !chefId;
+      const apiEndpoint = isGeneralRequest ? '/api/chef-services/general-request' : '/api/chef-services/book';
+      
       const bookingData = {
-        chefId,
+        ...(chefId && { chefId }), // Only include chefId if it exists
         eventType: eventTypeMapping[eventDetails.type as keyof typeof eventTypeMapping] || 'private_dining',
         eventDate: eventDateOnly,
         eventTime: eventTimeOnly,
@@ -260,12 +309,14 @@ function BookChefPageContent() {
         specialRequests: eventDetails.specialRequests || '',
         dietaryRestrictions: (eventDetails.dietaryRestrictions || []).map(restriction => restriction.toLowerCase()),
         customMenu: eventDetails.customMenu.isCustom ? eventDetails.customMenu : undefined,
-        paymentMethod: 'cod'
+        paymentMethod: 'cod',
+        ...(isGeneralRequest && { budget: budgetDetails }) // Include budget for general requests
       };
 
       console.log('Sending booking request with data:', JSON.stringify(bookingData, null, 2));
+      console.log('Using API endpoint:', apiEndpoint);
 
-      const response = await fetch('/api/chef-services/book', {
+      const response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -277,7 +328,13 @@ function BookChefPageContent() {
       if (response.ok) {
         const result = await response.json();
         console.log('Booking successful:', result);
-        toast.success('Chef booking request sent successfully!');
+        
+        if (isGeneralRequest) {
+          toast.success('General chef request sent successfully! Available chefs will be notified.');
+        } else {
+          toast.success('Chef booking request sent successfully!');
+        }
+        
         setStep(5); // Success step
       } else {
         const error = await response.json();
@@ -324,17 +381,27 @@ function BookChefPageContent() {
     switch (step) {
       case 1:
         return eventDetails.type && eventDetails.title && eventDetails.description && 
-               eventDetails.date && eventDetails.cuisine.length > 0;
+               eventDetails.date; // Removed cuisine requirement
       case 2:
         return locationDetails.address && locationDetails.city && 
                locationDetails.state && locationDetails.pincode;
       case 3:
         return budgetDetails.min > 0 && budgetDetails.max > budgetDetails.min;
       case 4:
-        const chefId = preferredChefId || selectedChef?._id;
-        return chefId && eventDetails.type && eventDetails.date && 
-               eventDetails.cuisine.length > 0 && locationDetails.address &&
-               locationDetails.city && locationDetails.state && locationDetails.pincode;
+        // For step 4, we need either a selected chef OR all required fields for general request
+        const hasSelectedChef = preferredChefId || selectedChef?._id;
+        const hasRequiredFields = eventDetails.type && eventDetails.date && 
+                                 locationDetails.address &&
+                                 locationDetails.city && locationDetails.state && locationDetails.pincode;
+        const hasPhone = JSON.parse(localStorage.getItem('user') || '{}')?.phone || (userPhone && userPhone.trim().length >= 10);
+        
+        // If no chef is selected, we're making a general request
+        if (!hasSelectedChef) {
+          return hasRequiredFields && !!hasPhone;
+        }
+        
+        // If chef is selected, we need all required fields
+        return hasSelectedChef && hasRequiredFields && !!hasPhone;
       default:
         return true;
     }
@@ -503,8 +570,12 @@ function BookChefPageContent() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Duration (hours)</label>
                     <input
                       type="number"
-                      value={eventDetails.duration}
-                      onChange={(e) => setEventDetails(prev => ({ ...prev, duration: parseInt(e.target.value) }))}
+                      value={Number.isFinite(eventDetails.duration) ? eventDetails.duration : 0}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        const n = v === '' ? 0 : parseInt(v, 10);
+                        setEventDetails(prev => ({ ...prev, duration: Number.isFinite(n) ? n : 0 }));
+                      }}
                       min="1"
                       max="24"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
@@ -514,8 +585,12 @@ function BookChefPageContent() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Guest Count</label>
                     <input
                       type="number"
-                      value={eventDetails.guestCount}
-                      onChange={(e) => setEventDetails(prev => ({ ...prev, guestCount: parseInt(e.target.value) }))}
+                      value={Number.isFinite(eventDetails.guestCount) ? eventDetails.guestCount : 0}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        const n = v === '' ? 0 : parseInt(v, 10);
+                        setEventDetails(prev => ({ ...prev, guestCount: Number.isFinite(n) ? n : 0 }));
+                      }}
                       min="1"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
                     />
@@ -524,7 +599,10 @@ function BookChefPageContent() {
 
                 {/* Cuisine Selection */}
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-3">Preferred Cuisines</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-3">
+                    Preferred Cuisines (Optional)
+                    <span className="text-sm font-normal text-gray-600 block">Select your preferred cuisines or leave blank for chef's recommendation</span>
+                  </label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
                     {cuisineOptions.map((cuisine) => (
                       <button
@@ -540,6 +618,11 @@ function BookChefPageContent() {
                       </button>
                     ))}
                   </div>
+                  {eventDetails.cuisine.length === 0 && (
+                    <p className="text-sm text-gray-500 mt-2">
+                      No cuisines selected - chef will recommend based on your event type
+                    </p>
+                  )}
                 </div>
 
                 {/* Special Requests */}
@@ -794,8 +877,12 @@ function BookChefPageContent() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Minimum Budget (₹)</label>
                     <input
                       type="number"
-                      value={budgetDetails.min}
-                      onChange={(e) => setBudgetDetails(prev => ({ ...prev, min: parseInt(e.target.value) }))}
+                      value={Number.isFinite(budgetDetails.min) ? budgetDetails.min : 0}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        const n = v === '' ? 0 : parseInt(v, 10);
+                        setBudgetDetails(prev => ({ ...prev, min: Number.isFinite(n) ? n : prev.min }));
+                      }}
                       min="1000"
                       step="500"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
@@ -805,8 +892,12 @@ function BookChefPageContent() {
                     <label className="block text-sm font-medium text-gray-700 mb-2">Maximum Budget (₹)</label>
                     <input
                       type="number"
-                      value={budgetDetails.max}
-                      onChange={(e) => setBudgetDetails(prev => ({ ...prev, max: parseInt(e.target.value) }))}
+                      value={Number.isFinite(budgetDetails.max) ? budgetDetails.max : 0}
+                      onChange={(e) => {
+                        const v = e.target.value;
+                        const n = v === '' ? 0 : parseInt(v, 10);
+                        setBudgetDetails(prev => ({ ...prev, max: Number.isFinite(n) ? n : prev.max }));
+                      }}
                       min="1000"
                       step="500"
                       className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
@@ -851,6 +942,21 @@ function BookChefPageContent() {
                 <h2 className="text-3xl font-bold text-gray-900 mb-2">Review Your Request</h2>
                 <p className="text-gray-600">Please review all details before submitting your chef booking request</p>
               </div>
+
+              {/* Phone capture for users without phone on profile */}
+              {(!JSON.parse(localStorage.getItem('user') || '{}')?.phone) && (
+                <div className="mb-8">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Contact Number (required)</label>
+                  <input
+                    type="tel"
+                    value={userPhone}
+                    onChange={(e) => setUserPhone(e.target.value)}
+                    placeholder="Enter your phone number"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent bg-white text-gray-900"
+                  />
+                  <p className="text-xs text-gray-500 mt-1">We need your phone number so your chef can coordinate details.</p>
+                </div>
+              )}
               
               <div className="space-y-6">
                 {/* Event Summary */}
@@ -978,7 +1084,10 @@ function BookChefPageContent() {
               </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">Request Sent Successfully!</h2>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Your chef booking request has been sent. You'll receive a notification once a chef accepts your request.
+                {preferredChefId || selectedChef?._id 
+                  ? "Your chef booking request has been sent. You'll receive a notification once the chef responds."
+                  : "Your general chef request has been sent. Available chefs will be notified and the first to accept will be assigned to your event."
+                }
               </p>
               <div className="flex flex-col sm:flex-row justify-center space-y-3 sm:space-y-0 sm:space-x-4">
                 <button

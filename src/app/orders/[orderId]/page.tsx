@@ -24,6 +24,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import AuthGuard from '@/components/AuthGuard';
+import { checkAuthState, redirectToLogin } from '@/lib/utils/auth';
 
 interface OrderItem {
   _id: string;
@@ -151,9 +152,30 @@ export default function OrderDetailsPage() {
   const fetchOrderDetails = async () => {
     try {
       setIsLoading(true);
-      const response = await fetch(`/api/orders/${orderId}`);
+      
+      const authState = checkAuthState();
+      
+      if (!authState.isAuthenticated) {
+        console.log('Order Details: No authentication found', authState);
+        toast.error('Authentication required. Please login again.');
+        redirectToLogin();
+        return;
+      }
+      
+      const response = await fetch(`/api/orders/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${authState.token}`,
+          'Content-Type': 'application/json',
+        },
+      });
       
       if (!response.ok) {
+        if (response.status === 401) {
+          console.log('Order Details: Unauthorized, redirecting to login');
+          toast.error('Session expired. Please login again.');
+          redirectToLogin();
+          return;
+        }
         throw new Error('Failed to fetch order details');
       }
       
@@ -175,11 +197,17 @@ export default function OrderDetailsPage() {
       const { unifiedCartService } = await import('@/lib/api');
       
       for (const item of order.items) {
-        await unifiedCartService.addToCart({
-          menuItemId: item.menuItem._id,
-          quantity: item.quantity,
-          customization: item.customization
-        });
+        await unifiedCartService.addToCart(
+          item.menuItem._id,
+          item.menuItem.name,
+          item.menuItem.description || '',
+          item.menuItem.price,
+          item.quantity,
+          item.menuItem.image,
+          order.restaurant._id,
+          order.restaurant.name,
+          item.customization ? [item.customization] : []
+        );
       }
       
       toast.success('Items added to cart!');
@@ -492,21 +520,21 @@ export default function OrderDetailsPage() {
                 <h2 className="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
                 <div className="space-y-3">
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal</span>
-                    <span className="font-medium">₹{order.subtotal}</span>
+                    <span className="text-gray-800 font-medium">Subtotal</span>
+                    <span className="font-semibold text-gray-900">₹{order.subtotal}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Delivery Fee</span>
-                    <span className="font-medium">₹{order.deliveryFee}</span>
+                    <span className="text-gray-800 font-medium">Delivery Fee</span>
+                    <span className="font-semibold text-gray-900">₹{order.deliveryFee}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-600">Tax</span>
-                    <span className="font-medium">₹{order.tax}</span>
+                    <span className="text-gray-800 font-medium">Tax</span>
+                    <span className="font-semibold text-gray-900">₹{order.tax ?? (order as any).taxes ?? 0}</span>
                   </div>
                   <div className="border-t pt-3">
                     <div className="flex justify-between">
-                      <span className="text-lg font-semibold">Total</span>
-                      <span className="text-lg font-semibold">₹{order.totalAmount}</span>
+                      <span className="text-lg font-semibold text-gray-900">Total</span>
+                      <span className="text-lg font-extrabold text-gray-900">₹{order.totalAmount}</span>
                     </div>
                   </div>
                 </div>

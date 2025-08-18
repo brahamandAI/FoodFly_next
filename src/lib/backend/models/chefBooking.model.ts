@@ -3,7 +3,7 @@ import mongoose, { Document, Schema } from 'mongoose';
 export interface IChefBooking extends Document {
   _id: string;
   customerId: string;
-  chefId: string;
+  chefId: string | null;
   bookingDetails: {
     eventType: 'private_dining' | 'catering' | 'cooking_class' | 'meal_prep' | 'consultation';
     eventDate: Date;
@@ -37,8 +37,13 @@ export interface IChefBooking extends Document {
     };
     totalAmount: number;
     currency: string;
+    budgetRange?: {
+      min: number;
+      max: number;
+      isFlexible: boolean;
+    };
   };
-  status: 'pending' | 'confirmed' | 'chef_assigned' | 'in_progress' | 'completed' | 'cancelled' | 'refunded';
+  status: 'pending' | 'confirmed' | 'chef_assigned' | 'in_progress' | 'completed' | 'cancelled' | 'refunded' | 'pending_chef_assignment';
   payment: {
     method: 'cod' | 'online' | 'advance_partial';
     status: 'pending' | 'advance_paid' | 'completed' | 'refunded';
@@ -54,7 +59,7 @@ export interface IChefBooking extends Document {
     phone: string;
     specialization: string[];
     rating: number;
-  };
+  } | null;
   customer: {
     id: string;
     name: string;
@@ -105,7 +110,7 @@ const ChefBookingSchema = new Schema<IChefBooking>({
   },
   chefId: {
     type: String,
-    required: true,
+    required: false,
     index: true
   },
   bookingDetails: {
@@ -219,14 +224,28 @@ const ChefBookingSchema = new Schema<IChefBooking>({
     currency: {
       type: String,
       default: 'INR'
+    },
+    budgetRange: {
+      min: {
+        type: Number,
+        min: 0
+      },
+      max: {
+        type: Number,
+        min: 0
+      },
+      isFlexible: {
+        type: Boolean,
+        default: false
+      }
     }
   },
-  status: {
-    type: String,
-    enum: ['pending', 'confirmed', 'chef_assigned', 'in_progress', 'completed', 'cancelled', 'refunded'],
-    default: 'pending',
-    index: true
-  },
+      status: {
+      type: String,
+      enum: ['pending', 'confirmed', 'chef_assigned', 'in_progress', 'completed', 'cancelled', 'refunded', 'pending_chef_assignment'],
+      default: 'pending',
+      index: true
+    },
   payment: {
     method: {
       type: String,
@@ -249,19 +268,19 @@ const ChefBookingSchema = new Schema<IChefBooking>({
   chef: {
     id: {
       type: String,
-      required: true
+      required: false
     },
     name: {
       type: String,
-      required: true
+      required: false
     },
     email: {
       type: String,
-      required: true
+      required: false
     },
     phone: {
       type: String,
-      required: true
+      required: false
     },
     specialization: [{
       type: String

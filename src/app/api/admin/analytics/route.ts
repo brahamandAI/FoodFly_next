@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import connectDB from '@/lib/backend/database';
 import Order from '@/lib/backend/models/order.model';
 import User from '@/lib/backend/models/user.model';
+import ChefBooking from '@/lib/backend/models/chefBooking.model';
 
 // Force dynamic rendering for this route
 export const dynamic = 'force-dynamic';
@@ -56,7 +57,8 @@ export async function GET(request: NextRequest) {
       totalDeliveryPartners,
       activeDeliveryPartners,
       totalChefs,
-      activeChefs
+      activeChefs,
+      totalChefBookings
     ] = await Promise.all([
       // Total orders
       Order.countDocuments({}),
@@ -217,7 +219,10 @@ export async function GET(request: NextRequest) {
       User.countDocuments({ 
         role: 'chef',
         'chefProfile.availability.status': { $in: ['available', 'busy'] }
-      })
+      }),
+
+      // Total chef bookings
+      ChefBooking.countDocuments({})
     ]);
 
     // Calculate average rating from orders that have ratings
@@ -312,7 +317,7 @@ export async function GET(request: NextRequest) {
       totalChefs,
       activeChefs,
       avgChefRating: averageRating, // Could be calculated separately if needed
-      totalChefBookings: 0, // Would need chef booking model
+      totalChefBookings,
       
       // System health indicators (calculated from real data)
       systemHealth: {

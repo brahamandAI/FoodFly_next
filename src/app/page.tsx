@@ -354,33 +354,33 @@ export default function HomePage() {
       <SignupPopup isOpen={showSignupPopup} onClose={() => setShowSignupPopup(false)} />
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="bg-black relative min-h-[600px] flex flex-col justify-center">
-        <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center px-4 py-12 gap-8 relative z-10">
+      <section className="bg-black relative min-h-[500px] sm:min-h-[600px] flex flex-col justify-center">
+        <div className="max-w-7xl mx-auto w-full flex flex-col md:flex-row items-center px-4 sm:px-6 lg:px-8 py-8 sm:py-12 gap-6 sm:gap-8 relative z-10">
           {/* Left: Text */}
-          <div className="flex-1 text-center md:text-left space-y-6 text-white">
-            <div className="inline-block bg-accent-yellow text-[#232323] px-4 py-1 rounded-full text-sm font-semibold mb-2">From Screen To Stomach 🥘</div>
-            <h1 className="text-4xl md:text-5xl font-bold leading-tight">Order Tasty And<br />Fresh Food Any Time</h1>
+          <div className="flex-1 text-center md:text-left space-y-4 sm:space-y-6 text-white">
+            <div className="inline-block bg-yellow-400 text-[#232323] px-4 py-1 rounded-full text-sm font-semibold mb-2 shadow-lg">From Screen To Stomach 🥘</div>
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight">Order Tasty And<br />Fresh Food Any Time</h1>
             {/* Marquee Robo Delivery Announcement */}
-            <div className="flex justify-center items-center w-full my-6">
+            <div className="flex justify-center items-center w-full my-4 sm:my-6">
               <div className="overflow-hidden w-full bg-gradient-to-r from-yellow-900/20 via-yellow-800/30 to-yellow-900/20 rounded-xl border border-yellow-600/30 shadow-lg backdrop-blur-sm">
                 <a href="/info-banner.pdf" target="_blank" rel="noopener noreferrer" className="block hover:bg-yellow-800/10 transition-all duration-300">
-                  <div className="whitespace-nowrap animate-marquee flex items-center justify-center gap-4 cursor-pointer py-3 px-4 hover:scale-105 transition-transform duration-300">
+                  <div className="whitespace-nowrap animate-marquee flex items-center justify-center gap-2 sm:gap-4 cursor-pointer py-2 sm:py-3 px-2 sm:px-4 hover:scale-105 transition-transform duration-300">
                     <Image
                       src="/images/robo-delivery.png"
                       alt="Robo Delivery"
-                      width={64}
-                      height={64}
-                      className="inline-block rounded-full border-2 border-yellow-400 bg-white shadow-lg hover:border-yellow-300 transition-all duration-300 hover:shadow-xl hover:scale-110"
+                      width={48}
+                      height={48}
+                      className="inline-block rounded-full border-2 border-yellow-400 bg-white shadow-lg hover:border-yellow-300 transition-all duration-300 hover:shadow-xl hover:scale-110 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
                     />
-                    <span className="text-base md:text-lg font-bold text-yellow-300 drop-shadow-lg hover:text-yellow-200 transition-colors duration-300">
+                    <span className="text-xs sm:text-base md:text-lg font-bold text-yellow-300 drop-shadow-lg hover:text-yellow-200 transition-colors duration-300">
                        Coming soon: Robo Meal deliveries within 2 km of our restaurant! The future of food is rolling your way! 
                     </span>
                     <Image
                       src="/images/robo-delivery.png"
                       alt="Robo Delivery"
-                      width={64}
-                      height={64}
-                      className="inline-block rounded-full border-2 border-yellow-400 bg-white shadow-lg hover:border-yellow-300 transition-all duration-300 hover:shadow-xl hover:scale-110"
+                      width={48}
+                      height={48}
+                      className="inline-block rounded-full border-2 border-yellow-400 bg-white shadow-lg hover:border-yellow-300 transition-all duration-300 hover:shadow-xl hover:scale-110 w-10 h-10 sm:w-12 sm:h-12 md:w-16 md:h-16"
                     />
                   </div>
                 </a>
@@ -388,40 +388,40 @@ export default function HomePage() {
             </div>
             
               {/* Menu & Deals Quick Access (replaces Search Form) */}
-              <div className="flex items-center justify-center md:justify-start gap-6 mt-6">
-                <a href="/menu" className="flex flex-col items-center group">
-                  <span className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-yellow-400 to-red-500 shadow-lg group-hover:scale-110 transition-transform">
-                    <Utensils className="h-7 w-7 text-white" />
+              <div className="flex items-center justify-center md:justify-start gap-4 sm:gap-6 mt-4 sm:mt-6 w-full">
+                <a href="/menu" className="flex flex-col items-center group flex-1 sm:flex-none">
+                  <span className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-yellow-400 to-red-500 shadow-lg group-hover:scale-110 transition-transform">
+                    <Utensils className="h-6 w-6 sm:h-7 sm:w-7 text-white" />
                   </span>
-                  <span className="mt-2 text-sm font-semibold text-yellow-300 group-hover:text-yellow-200 transition-colors">Menu</span>
+                  <span className="mt-2 text-xs sm:text-sm font-semibold text-yellow-300 group-hover:text-yellow-200 transition-colors">Menu</span>
                 </a>
-                <a href="/deals" className="flex flex-col items-center group">
-                  <span className="flex items-center justify-center w-14 h-14 rounded-full bg-gradient-to-tr from-red-500 to-yellow-400 shadow-lg group-hover:scale-110 transition-transform">
-                    <Flame className="h-7 w-7 text-white animate-bounce" />
+                <a href="/deals" className="flex flex-col items-center group flex-1 sm:flex-none">
+                  <span className="flex items-center justify-center w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-tr from-red-500 to-yellow-400 shadow-lg group-hover:scale-110 transition-transform">
+                    <Flame className="h-6 w-6 sm:h-7 sm:w-7 text-white animate-bounce" />
                   </span>
-                  <span className="mt-2 text-sm font-semibold text-red-300 group-hover:text-yellow-200 transition-colors">Deals</span>
+                  <span className="mt-2 text-xs sm:text-sm font-semibold text-red-300 group-hover:text-yellow-200 transition-colors">Deals</span>
                 </a>
               </div>
 
             {/* AI Features Quick Access */}
-            <div className="flex flex-wrap gap-3 mt-6">
+            <div className="flex flex-col sm:flex-row w-full gap-2 sm:gap-3 mt-4 sm:mt-6">
               <button
                 onClick={() => handleAIFeatureClick('voice')}
-                className="flex items-center gap-2 bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-red-600 hover:bg-red-700 text-white px-3 py-3 sm:px-4 rounded-lg transition-colors text-sm"
               >
                 <Mic className="h-4 w-4" />
                 Voice Order
               </button>
               <button
                 onClick={() => handleAIFeatureClick('smart')}
-                className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-3 py-3 sm:px-4 rounded-lg transition-colors text-sm"
               >
                 <Brain className="h-4 w-4" />
                 Smart Pick
               </button>
               <button
                 onClick={() => handleAIFeatureClick('health')}
-                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
+                className="w-full sm:w-auto flex items-center justify-center gap-2 bg-green-600 hover:bg-green-700 text-white px-3 py-3 sm:px-4 rounded-lg transition-colors text-sm"
               >
                 <Heart className="h-4 w-4" />
                 Healthy Options
@@ -430,23 +430,37 @@ export default function HomePage() {
               </div>
 
           {/* Right: Food Images */}
-          <div className="flex-1 flex justify-center items-center relative min-h-[320px] gap-6">
-            <Image
-              src="/images/hero-vegthali.jpg"
-              alt="Veg Thali Hero"
-              width={320}
-              height={320}
-              className="object-contain drop-shadow-2xl rounded-full border-8 border-white bg-white"
-              priority
-            />
-            <Image
-              src="/images/hero-burger.jpg"
-              alt="Burger Hero"
-              width={220}
-              height={220}
-              className="object-contain drop-shadow-xl rounded-full border-8 border-white bg-white md:-ml-12 -ml-4"
-              priority
-            />
+          <div className="flex-1">
+            {/* Mobile: single hero image */}
+            <div className="flex sm:hidden justify-center items-center py-6">
+              <Image
+                src="/images/hero-vegthali.jpg"
+                alt="Veg Thali Hero"
+                width={240}
+                height={240}
+                className="object-contain drop-shadow-2xl rounded-full border-4 border-white bg-white w-40 h-40"
+                priority
+              />
+            </div>
+            {/* Tablet/Desktop: dual images */}
+            <div className="hidden sm:flex justify-center items-center relative min-h-[280px] md:min-h-[320px] gap-4 md:gap-6">
+              <Image
+                src="/images/hero-vegthali.jpg"
+                alt="Veg Thali Hero"
+                width={320}
+                height={320}
+                className="object-contain drop-shadow-2xl rounded-full border-4 sm:border-8 border-white bg-white w-40 h-40 sm:w-48 sm:h-48 md:w-80 md:h-80"
+                priority
+              />
+              <Image
+                src="/images/hero-burger.jpg"
+                alt="Burger Hero"
+                width={220}
+                height={220}
+                className="object-contain drop-shadow-xl rounded-full border-4 sm:border-8 border-white bg-white md:-ml-12 -ml-2 w-28 h-28 sm:w-36 sm:h-36 md:w-56 md:h-56"
+                priority
+              />
+            </div>
           </div>
         </div>
         {/* Curved Divider */}
@@ -457,83 +471,83 @@ export default function HomePage() {
 
       {/* AI Features Section - Only show for authenticated users */}
       {isAuthenticated && (
-        <section className="py-16 bg-black">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Smart Features</h2>
-              <p className="text-gray-300 max-w-2xl mx-auto">Experience the future of food ordering with our AI-powered features</p>
+        <section className="py-12 sm:py-16 bg-black">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="text-center mb-8 sm:mb-12">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">Smart Features</h2>
+              <p className="text-gray-300 max-w-2xl mx-auto text-sm sm:text-base">Experience the future of food ordering with our AI-powered features</p>
           </div>
 
             {/* Quick Navigation */}
-            <div className="flex justify-center gap-6 mb-12">
+            <div className="flex justify-center gap-4 sm:gap-6 mb-8 sm:mb-12">
               <Link 
                 href="/menu" 
-                className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-700"
+                className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-700 text-sm sm:text-base"
               >
                 <span className="relative flex items-center justify-center">
-                  <span className="absolute w-8 h-8 rounded-full bg-gradient-to-tr from-red-500 to-yellow-400 opacity-30 animate-pulse"></span>
-                  <Utensils className="h-6 w-6 text-red-400 z-10 animate-bounce" />
+                  <span className="absolute w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-red-500 to-yellow-400 opacity-30 animate-pulse"></span>
+                  <Utensils className="h-5 w-5 sm:h-6 sm:w-6 text-red-400 z-10 animate-bounce" />
                 </span>
                 <span className="font-semibold">Menu</span>
               </Link>
               <Link 
                 href="/deals" 
-                className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-6 py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-700"
+                className="flex items-center gap-2 bg-gray-900 hover:bg-gray-800 text-white px-4 py-2 sm:px-6 sm:py-3 rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-gray-700 text-sm sm:text-base"
               >
                 <span className="relative flex items-center justify-center">
-                  <span className="absolute w-8 h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-pink-500 opacity-40 animate-pulse"></span>
-                  <Flame className="h-6 w-6 text-red-400 z-10 animate-bounce" />
-                  <span className="absolute -top-2 -right-3 bg-red-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full shadow animate-pulse">HOT</span>
+                  <span className="absolute w-6 h-6 sm:w-8 sm:h-8 rounded-full bg-gradient-to-tr from-yellow-400 via-red-500 to-pink-500 opacity-40 animate-pulse"></span>
+                  <Flame className="h-5 w-5 sm:h-6 sm:w-6 text-red-400 z-10 animate-bounce" />
+                  <span className="absolute -top-1 -right-2 sm:-top-2 sm:-right-3 bg-red-600 text-white text-[8px] sm:text-[10px] font-bold px-1 sm:px-1.5 py-0.5 rounded-full shadow animate-pulse">HOT</span>
                 </span>
                 <span className="font-semibold">Deals</span>
               </Link>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
               {/* Voice Order */}
               <div 
-                className="bg-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="bg-gray-900 rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                 onClick={() => handleAIFeatureClick('voice')}
               >
-                <div className="flex items-center justify-center w-16 h-16 bg-red-900 rounded-full mb-4">
-                  <Mic className="h-8 w-8 text-red-400" />
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-red-900 rounded-full mb-3 sm:mb-4">
+                  <Mic className="h-6 w-6 sm:h-8 sm:w-8 text-red-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-white">Voice Order</h3>
-                <p className="text-gray-300 mb-4">Order food naturally with your voice. Just speak and we'll understand your preferences.</p>
-                <div className="flex items-center text-sm text-gray-400">
-                  <Sparkles className="h-4 w-4 mr-1" />
+                <h3 className="text-lg sm:text-xl font-bold mb-2 text-white">Voice Order</h3>
+                <p className="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">Order food naturally with your voice. Just speak and we'll understand your preferences.</p>
+                <div className="flex items-center text-xs sm:text-sm text-gray-400">
+                  <Sparkles className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   AI-Powered
                 </div>
               </div>
 
               {/* Smart Pick */}
               <div 
-                className="bg-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="bg-gray-900 rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                 onClick={() => handleAIFeatureClick('smart')}
               >
-                <div className="flex items-center justify-center w-16 h-16 bg-blue-900 rounded-full mb-4">
-                  <Brain className="h-8 w-8 text-blue-400" />
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-blue-900 rounded-full mb-3 sm:mb-4">
+                  <Brain className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-white">Smart Pick</h3>
-                <p className="text-gray-300 mb-4">Get personalized recommendations based on your taste, weather, and mood.</p>
-                <div className="flex items-center text-sm text-gray-400">
-                  <Target className="h-4 w-4 mr-1" />
+                <h3 className="text-lg sm:text-xl font-bold mb-2 text-white">Smart Pick</h3>
+                <p className="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">Get personalized recommendations based on your taste, weather, and mood.</p>
+                <div className="flex items-center text-xs sm:text-sm text-gray-400">
+                  <Target className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Personalized
                 </div>
               </div>
 
               {/* Healthy Options */}
               <div 
-                className="bg-gray-900 rounded-xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
+                className="bg-gray-900 rounded-xl p-4 sm:p-6 shadow-lg hover:shadow-xl transition-all duration-300 cursor-pointer"
                 onClick={() => handleAIFeatureClick('health')}
               >
-                <div className="flex items-center justify-center w-16 h-16 bg-green-900 rounded-full mb-4">
-                  <Heart className="h-8 w-8 text-green-400" />
+                <div className="flex items-center justify-center w-12 h-12 sm:w-16 sm:h-16 bg-green-900 rounded-full mb-3 sm:mb-4">
+                  <Heart className="h-6 w-6 sm:h-8 sm:w-8 text-green-400" />
                 </div>
-                <h3 className="text-xl font-bold mb-2 text-white">Healthy Options</h3>
-                <p className="text-gray-300 mb-4">Discover nutritious meals that match your dietary preferences and health goals.</p>
-                <div className="flex items-center text-sm text-gray-400">
-                  <Leaf className="h-4 w-4 mr-1" />
+                <h3 className="text-lg sm:text-xl font-bold mb-2 text-white">Healthy Options</h3>
+                <p className="text-gray-300 mb-3 sm:mb-4 text-sm sm:text-base">Discover nutritious meals that match your dietary preferences and health goals.</p>
+                <div className="flex items-center text-xs sm:text-sm text-gray-400">
+                  <Leaf className="h-3 w-3 sm:h-4 sm:w-4 mr-1" />
                   Health-Focused
                 </div>
               </div>
@@ -543,14 +557,14 @@ export default function HomePage() {
       )}
 
       {/* Popular Restaurants Section */}
-      <section className="py-16 bg-black">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold mb-4 text-white">Our Restaurants</h2>
-            <p className="text-gray-300 max-w-2xl mx-auto">Discover the most loved restaurants in your area, from local favorites to hidden gems.</p>
+      <section className="py-12 sm:py-16 bg-black">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 text-white">Our Restaurants</h2>
+            <p className="text-gray-300 max-w-2xl mx-auto text-sm sm:text-base">Discover the most loved restaurants in your area, from local favorites to hidden gems.</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
             {/* Symposium World Cuisine */}
             <a 
               href="https://www.google.com/maps/place/Symposium+World+Cuisine/@28.5844,77.0474,17z"
@@ -558,7 +572,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
-              <div className="relative h-48">
+              <div className="relative h-40 sm:h-48">
                   <Image
                   src="/images/restaurants/symposium.jpg"
                   alt="Symposium World Cuisine"
@@ -568,25 +582,25 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-white text-2xl font-bold">Symposium World Cuisine</h3>
-                  <p className="text-white/90 text-sm">⭐ 4.5 (500+ reviews)</p>
+                  <h3 className="text-white text-lg sm:text-2xl font-bold">Symposium World Cuisine</h3>
+                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.5 (500+ reviews)</p>
                 </div>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
+              <div className="p-4 sm:p-6">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-sm">101, First Floor, City Centre Mall, Sector 12 Dwarka, New Delhi, Delhi 110075</p>
-                      <p className="text-gray-500 text-sm mt-1">Open • 11:00 AM - 11:00 PM</p>
-                      <div className="flex items-center gap-2 mt-2">
+                      <p className="text-gray-600 text-xs sm:text-sm">101, First Floor, City Centre Mall, Sector 12 Dwarka, New Delhi, Delhi 110075</p>
+                      <p className="text-gray-500 text-xs sm:text-sm mt-1">Open • 11:00 AM - 11:00 PM</p>
+                      <div className="flex items-center gap-1 sm:gap-2 mt-2 flex-wrap">
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Open Now</span>
                         <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">15% Off</span>
                         <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Fine Dining</span>
-          </div>
-        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
-            </div>
+              </div>
             </a>
 
             {/* Panache */}
@@ -596,7 +610,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
-              <div className="relative h-48">
+              <div className="relative h-40 sm:h-48">
                     <Image
                   src="/images/restaurants/panache.jpg"
                   alt="Panache"
@@ -606,17 +620,17 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-white text-2xl font-bold">Panache</h3>
-                  <p className="text-white/90 text-sm">⭐ 4.3 (300+ reviews)</p>
+                  <h3 className="text-white text-lg sm:text-2xl font-bold">Panache</h3>
+                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.3 (300+ reviews)</p>
                 </div>
               </div>
-              <div className="p-6">
-                <div className="space-y-4">
+              <div className="p-4 sm:p-6">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-sm">Sector 17, Dwarka, New Delhi</p>
-                      <p className="text-gray-500 text-sm mt-1">Open • 12:00 PM - 11:00 PM</p>
-                      <div className="flex items-center gap-2 mt-2">
+                      <p className="text-gray-600 text-xs sm:text-sm">Sector 17, Dwarka, New Delhi</p>
+                      <p className="text-gray-500 text-xs sm:text-sm mt-1">Open • 12:00 PM - 11:00 PM</p>
+                      <div className="flex items-center gap-1 sm:gap-2 mt-2 flex-wrap">
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Open Now</span>
                         <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Family Dining</span>
                       </div>
@@ -633,7 +647,7 @@ export default function HomePage() {
               rel="noopener noreferrer"
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
-              <div className="relative h-48">
+              <div className="relative h-40 sm:h-48">
                 <Image
                   src="/images/restaurants/cafe.jpg"
                   alt="Cafe After Hours"
@@ -643,17 +657,17 @@ export default function HomePage() {
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-white text-2xl font-bold">Cafe After Hours</h3>
-                  <p className="text-white/90 text-sm">⭐ 4.2 (400+ reviews)</p>
+                  <h3 className="text-white text-lg sm:text-2xl font-bold">Cafe After Hours</h3>
+                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.2 (400+ reviews)</p>
                 </div>
-                      </div>
-              <div className="p-6">
-                <div className="space-y-4">
+              </div>
+              <div className="p-4 sm:p-6">
+                <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-sm">Sector 12, Dwarka, New Delhi</p>
-                      <p className="text-gray-500 text-sm mt-1">Open • 11:00 AM - 12:00 AM</p>
-                      <div className="flex items-center gap-2 mt-2">
+                      <p className="text-gray-600 text-xs sm:text-sm">Sector 12, Dwarka, New Delhi</p>
+                      <p className="text-gray-500 text-xs sm:text-sm mt-1">Open • 11:00 AM - 12:00 AM</p>
+                      <div className="flex items-center gap-1 sm:gap-2 mt-2 flex-wrap">
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Open Now</span>
                         <span className="px-2 py-1 bg-red-100 text-red-800 text-xs rounded-full">Late Night</span>
                       </div>
@@ -664,16 +678,16 @@ export default function HomePage() {
             </a>
           </div>
 
-          <div className="text-center mt-12">
+          <div className="text-center mt-8 sm:mt-12">
             <Link 
               href="/restaurant" 
-              className="inline-flex items-center gap-2 bg-accent-yellow text-[#232323] px-8 py-3 rounded-lg hover:bg-yellow-400 transition-colors"
+              className="inline-flex sm:inline-flex w-full sm:w-auto items-center justify-center gap-2 bg-yellow-400 text-[#232323] px-6 py-4 sm:px-8 rounded-lg hover:bg-yellow-500 transition-colors font-semibold shadow-lg text-base"
             >
               View All Restaurants
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
               </svg>
-                </Link>
+            </Link>
           </div>
         </div>
       </section>

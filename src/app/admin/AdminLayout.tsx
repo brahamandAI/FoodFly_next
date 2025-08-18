@@ -9,6 +9,7 @@ const navLinks = [
   { href: '/admin/deals', label: 'Deals' },
   { href: '/admin/orders', label: 'Orders' },
   { href: '/admin/delivery-partners', label: 'Delivery Partners' },
+  { href: '/admin/chefs', label: 'Chefs' },
   { href: '/admin/order-assignments', label: 'Order Assignments' },
   { href: '/admin/users', label: 'Users' },
   { href: '/admin/restaurants', label: 'Restaurants' },
@@ -39,7 +40,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
               href={link.href}
               className={`block px-4 py-3 rounded-lg font-semibold transition-all duration-200 ${
                 pathname === link.href
-                  ? 'bg-primary text-[#232323]' : 'hover:bg-gray-700 text-white'
+                  ? 'bg-yellow-400 text-[#232323] shadow-lg' : 'hover:bg-gray-700 text-white'
               }`}
             >
               {link.label}

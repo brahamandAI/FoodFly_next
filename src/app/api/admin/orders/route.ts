@@ -27,26 +27,47 @@ export async function GET(request: NextRequest) {
       .sort({ createdAt: -1 }); // Newest first
 
     return NextResponse.json({
-      orders: orders.map(order => ({
-        _id: order._id,
-        orderNumber: order.orderNumber,
-        customerId: order.customerId._id,
-        customerEmail: order.customerId.email,
-        restaurant: {
-          _id: order.restaurantId || 'unknown',
-          name: order.restaurantName || 'Unknown Restaurant'
-        },
-        totalAmount: order.totalAmount,
-        status: order.status,
-        paymentMethod: order.paymentMethod,
-        paymentStatus: order.paymentStatus,
-        createdAt: order.createdAt,
-        placedAt: order.placedAt || order.createdAt,
-        estimatedDeliveryTime: order.estimatedDeliveryTime,
-        deliveryAddress: order.deliveryAddress,
-        items: order.items,
-        specialInstructions: order.specialInstructions
-      })),
+      orders: orders.map(order => {
+        // Handle customer data properly
+        const customer = order.customerId;
+        const customerEmail = customer && typeof customer === 'object' ? customer.email : '';
+        const customerName = customer && typeof customer === 'object' ? customer.name : '';
+        const customerPhone = customer && typeof customer === 'object' ? customer.phone : '';
+
+        // Handle order items properly
+        const items = order.items.map((item: any) => ({
+          menuItemId: item.menuItemId || item._id,
+          name: item.name,
+          description: item.description || '',
+          price: item.price,
+          quantity: item.quantity,
+          customizations: item.customizations || [],
+          image: item.image || '/images/placeholder.svg'
+        }));
+
+        return {
+          _id: order._id,
+          orderNumber: order.orderNumber,
+          customerId: customer && typeof customer === 'object' ? customer._id : order.customerId,
+          customerEmail: customerEmail,
+          customerName: customerName,
+          customerPhone: customerPhone,
+          restaurant: {
+            _id: order.restaurantId || 'unknown',
+            name: order.restaurantName || 'Unknown Restaurant'
+          },
+          totalAmount: order.totalAmount,
+          status: order.status,
+          paymentMethod: order.paymentMethod,
+          paymentStatus: order.paymentStatus,
+          createdAt: order.createdAt,
+          placedAt: order.placedAt || order.createdAt,
+          estimatedDeliveryTime: order.estimatedDeliveryTime,
+          deliveryAddress: order.deliveryAddress,
+          items: items,
+          specialInstructions: order.specialInstructions
+        };
+      }),
       message: 'Orders retrieved successfully'
     });
 

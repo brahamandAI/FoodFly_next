@@ -50,6 +50,16 @@ export class EdgeAuthValidator {
     const authHeader = request.headers.get('authorization');
     const headerToken = authHeader?.replace('Bearer ', '');
 
+    // Debug: Log what tokens we found
+    console.log('🔍 EdgeAuthValidator - Token sources:', {
+      hasRegularToken: !!regularToken,
+      hasChefToken: !!chefToken,
+      hasDeliveryToken: !!deliveryToken,
+      hasHeaderToken: !!headerToken,
+      regularTokenLength: regularToken?.length || 0,
+      headerTokenLength: headerToken?.length || 0
+    });
+
     // Try tokens in order of preference
     const tokens = [headerToken, chefToken, deliveryToken, regularToken].filter(Boolean);
     
@@ -57,11 +67,16 @@ export class EdgeAuthValidator {
       if (token) {
         const result = this.validateToken(token);
         if (result.isValid) {
+          console.log('✅ EdgeAuthValidator - Valid token found:', {
+            userRole: result.user?.role,
+            userId: result.user?._id
+          });
           return result;
         }
       }
     }
 
+    console.log('❌ EdgeAuthValidator - No valid token found');
     return { isValid: false, error: 'No valid token found' };
   }
 

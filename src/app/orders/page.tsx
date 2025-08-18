@@ -22,6 +22,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
 import AuthGuard from '@/components/AuthGuard';
+import { checkAuthState, redirectToLogin } from '@/lib/utils/auth';
 
 interface OrderItem {
   _id: string;
@@ -142,76 +143,91 @@ export default function OrdersPage() {
   const fetchOrders = async () => {
     try {
       setIsLoading(true);
-      
-      // Build query parameters based on selected filter
+      const authState = checkAuthState();
+
+      if (!authState.isAuthenticated) {
+        console.log('Orders: No authentication found', authState);
+        toast.error('Authentication required. Please login again.');
+        redirectToLogin();
+        return;
+      }
+
       const params = new URLSearchParams();
       if (selectedFilter === 'cancelled') {
         params.append('status', 'cancelled');
       } else if (selectedFilter !== 'all') {
         params.append('status', selectedFilter);
       }
-      // Note: cancelled orders are excluded by default unless status=cancelled
-      
-      // Fetch orders from database API
+
       const response = await fetch(`/api/orders?${params.toString()}`, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+          'Authorization': `Bearer ${authState.token}`,
           'Content-Type': 'application/json',
         },
       });
 
-      if (!response.ok) {
+      if (response.ok) {
+        const data = await response.json();
+        const apiOrders = (data && (data.orders || data.data?.orders)) || [];
+
+        // Transform orders from API shape to UI Order type
+        const transformedOrders: Order[] = apiOrders.map((o: any) => ({
+          _id: o._id,
+          orderNumber: o.orderNumber,
+          restaurant: {
+            _id: o.restaurant?._id || 'default-restaurant',
+            name: o.restaurant?.name || 'Restaurant',
+            image: '/images/restaurants/cafe.jpg',
+            phone: '+91 9876543210',
+            address: {
+              street: o.deliveryAddress?.street || 'Main Street',
+              city: o.deliveryAddress?.city || 'Your City',
+              area: 'Food District'
+            }
+          },
+          items: (o.items || []).map((it: any) => ({
+            _id: it._id || it.menuItemId || `${o._id}_${it.name}`,
+            menuItem: {
+              _id: it.menuItemId || it._id || `${o._id}_${it.name}`,
+              name: it.name,
+              price: it.price,
+              image: it.image || '/images/placeholder.svg',
+              isVeg: true
+            },
+            quantity: it.quantity,
+            price: it.price,
+            customization: Array.isArray(it.customizations) ? it.customizations.join(', ') : (it.customization || '')
+          })),
+          status: o.status,
+          totalAmount: o.totalAmount,
+          deliveryFee: o.deliveryFee || 0,
+          tax: o.taxes || o.tax || 0,
+          subtotal: o.subtotal || 0,
+          paymentMethod: o.paymentMethod || 'cod',
+          paymentStatus: o.paymentStatus || 'pending',
+          deliveryAddress: o.deliveryAddress || {
+            name: '', phone: '', street: '', city: '', state: '', pincode: ''
+          },
+          estimatedDeliveryTime: o.estimatedDeliveryTime || o.placedAt,
+          placedAt: o.placedAt || o.createdAt,
+          deliveredAt: o.deliveredAt,
+          rating: o.rating,
+          review: o.review,
+          createdAt: o.createdAt,
+          cancelledAt: o.cancelledAt
+        }));
+
+        setOrders(transformedOrders);
+      } else if (response.status === 401) {
+        console.log('Orders: Unauthorized, redirecting to login');
+        toast.error('Session expired. Please login again.');
+        redirectToLogin();
+      } else {
         throw new Error('Failed to fetch orders');
       }
-
-      const data = await response.json();
-      
-      // Transform orders to match expected interface
-      const transformedOrders = data.orders.map((order: any) => ({
-        _id: order._id,
-        orderNumber: order.orderNumber,
-        restaurant: {
-          _id: order.restaurant._id,
-          name: order.restaurant.name,
-          image: '/images/restaurants/cafe.jpg', // Default image
-          phone: '+91 9876543210', // Default phone
-          address: {
-            street: 'Main Street',
-            city: 'Your City',
-            area: 'Food District'
-          }
-        },
-        items: order.items.map((item: any) => ({
-          _id: item.menuItemId,
-          menuItem: {
-            _id: item.menuItemId,
-            name: item.name,
-            price: item.price,
-            image: '/images/placeholder.svg',
-            isVeg: true
-          },
-          quantity: item.quantity,
-          price: item.price
-        })),
-        status: order.status,
-        totalAmount: order.totalAmount,
-        deliveryFee: order.deliveryFee || 0,
-        tax: order.taxes || 0,
-        subtotal: order.subtotal || 0,
-        paymentMethod: order.paymentMethod,
-        paymentStatus: order.paymentStatus,
-        deliveryAddress: order.deliveryAddress,
-        estimatedDeliveryTime: order.estimatedDeliveryTime,
-        placedAt: order.placedAt || order.createdAt,
-        createdAt: order.createdAt,
-        specialInstructions: order.specialInstructions
-      }));
-      
-      setOrders(transformedOrders);
     } catch (error) {
       console.error('Error fetching orders:', error);
       toast.error('Failed to load orders');
-      setOrders([]);
     } finally {
       setIsLoading(false);
     }
