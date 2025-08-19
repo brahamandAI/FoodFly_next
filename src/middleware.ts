@@ -17,15 +17,11 @@ export function middleware(request: NextRequest) {
       pathname.startsWith('/favicon.ico') || 
       pathname.startsWith('/images/') ||
       pathname.startsWith('/.well-known/') ||
-      pathname.includes('.')) {
+      pathname.includes('.') ||
+      pathname.startsWith('/api/admin/')) {
     return NextResponse.next();
   }
-  
-  // Temporarily allow dashboard routes to pass through - let components handle auth
-  if (pathname === '/chef/dashboard' || pathname === '/delivery/dashboard' || pathname === '/dashboard') {
-    return NextResponse.next();
-  }
-  
+
   // Validate session using JWT (Edge Runtime compatible)
   const sessionValidation = EdgeAuthValidator.getUserFromRequest(request);
   const user = sessionValidation.isValid ? sessionValidation.user : null;
@@ -40,34 +36,61 @@ export function middleware(request: NextRequest) {
     referrer: request.headers.get('referer')
   });
 
-  // STRICT ROLE-BASED SEPARATION (NO MIXING ALLOWED)
+  // ADMIN ROUTE PROTECTION - STRICT ENFORCEMENT
+  if (pathname.startsWith('/admin/')) {
+    // Allow access to admin login page for unauthenticated users
+    if (pathname === '/admin/login') {
+      console.log('✅ Admin login page - allowing access');
+      return NextResponse.next();
+    }
+
+    // For all other admin routes, require admin authentication
+    if (!user) {
+      console.log('🔒 Admin route accessed without authentication - redirecting to admin login');
+      return NextResponse.redirect(new URL('/admin/login', request.url));
+    }
+
+    // Check if user has admin role
+    if (user.role !== 'admin') {
+      console.log('❌ Non-admin user trying to access admin route - redirecting to appropriate dashboard');
+      
+      // Redirect based on user role
+      switch (user.role) {
+        case 'chef':
+          return NextResponse.redirect(new URL('/chef/dashboard', request.url));
+        case 'delivery':
+          return NextResponse.redirect(new URL('/delivery/dashboard', request.url));
+        case 'customer':
+        case 'user':
+          return NextResponse.redirect(new URL('/dashboard', request.url));
+        default:
+          return NextResponse.redirect(new URL('/login', request.url));
+      }
+    }
+
+    // Admin user accessing admin route - allow access
+    console.log('✅ Admin user accessing admin route - allowing access');
+    return NextResponse.next();
+  }
+
+  // ROLE-BASED ROUTE PROTECTION FOR OTHER ROLES
   if (user) {
     console.log('🔐 Middleware check:', { role: user.role, pathname });
 
-    // For dashboard routes, allow direct access for now and let component handle auth
-    if (pathname === '/chef/dashboard' && user.role === 'chef') {
-      return NextResponse.next();
-    }
-    if (pathname === '/delivery/dashboard' && user.role === 'delivery') {
-      return NextResponse.next();
-    }
-    if (pathname === '/dashboard' && (user.role === 'customer' || user.role === 'user')) {
-      return NextResponse.next();
-    }
-
-    // CHEF ROLE: Allow auth pages but block protected customer/delivery routes
+    // CHEF ROLE PROTECTION
     if (user.role === 'chef') {
-      // Allow access to customer auth pages so chefs can logout and switch roles
-      const customerAuthPages = ['/login', '/register'];
-      const deliveryAuthPages = ['/delivery/login', '/delivery/register'];
-      const authPages = [...customerAuthPages, ...deliveryAuthPages];
-      
-      if (authPages.includes(pathname)) {
-        console.log('✅ Chef allowed to access auth page for role switching:', pathname);
+      // Allow access to chef dashboard and chef-specific routes
+      if (pathname === '/chef/dashboard' || pathname.startsWith('/chef/')) {
         return NextResponse.next();
       }
       
-      // Block chef from protected customer and delivery routes (but not auth pages)
+      // Allow access to auth pages for role switching
+      const authPages = ['/login', '/register', '/delivery/login', '/delivery/register'];
+      if (authPages.includes(pathname)) {
+        return NextResponse.next();
+      }
+      
+      // Block chef from protected customer and delivery routes
       if (pathname.startsWith('/dashboard') || 
           pathname.startsWith('/delivery/') ||
           pathname.startsWith('/orders') || 
@@ -77,20 +100,20 @@ export function middleware(request: NextRequest) {
       }
     }
 
-    // DELIVERY ROLE: Allow auth pages but block protected customer/chef routes
+    // DELIVERY ROLE PROTECTION
     if (user.role === 'delivery') {
-      // Allow access to customer and chef auth pages so delivery agents can logout and switch roles
-      const customerAuthPages = ['/login', '/register'];
-      const chefAuthPages = ['/chef/login', '/chef/register'];
-      const deliveryAuthPages = ['/delivery/login', '/register-delivery'];
-      const authPages = [...customerAuthPages, ...chefAuthPages, ...deliveryAuthPages];
-      
-      if (authPages.includes(pathname)) {
-        console.log('✅ Delivery agent allowed to access auth page for role switching:', pathname);
+      // Allow access to delivery dashboard and delivery-specific routes
+      if (pathname === '/delivery/dashboard' || pathname.startsWith('/delivery/')) {
         return NextResponse.next();
       }
       
-      // Block delivery agent from protected customer and chef routes (but not auth pages)
+      // Allow access to auth pages for role switching
+      const authPages = ['/login', '/register', '/chef/login', '/chef/register'];
+      if (authPages.includes(pathname)) {
+        return NextResponse.next();
+      }
+      
+      // Block delivery agent from protected customer and chef routes
       if (pathname.startsWith('/dashboard') || 
           pathname.startsWith('/chef/') ||
           pathname.startsWith('/orders') || 
@@ -100,104 +123,59 @@ export function middleware(request: NextRequest) {
       }
     }
 
-    // CUSTOMER ROLE: Allow auth pages but block protected chef routes
+    // CUSTOMER/USER ROLE PROTECTION
     if (user.role === 'customer' || user.role === 'user') {
-      // Allow access to auth pages so users can logout and switch roles
-      const chefAuthPages = ['/chef/login', '/chef/register'];
-      const deliveryAuthPages = ['/delivery/login', '/register-delivery'];
-      const authPages = [...chefAuthPages, ...deliveryAuthPages];
-      
-      if (authPages.includes(pathname)) {
-        console.log('✅ Customer allowed to access auth page for role switching:', pathname);
+      // Allow access to customer dashboard and customer-specific routes
+      if (pathname === '/dashboard' || pathname.startsWith('/orders') || pathname.startsWith('/profile')) {
         return NextResponse.next();
       }
       
-      // Block customer from protected chef routes (but not auth pages)
-      if (pathname.startsWith('/chef/') && !chefAuthPages.includes(pathname)) {
-        console.log('❌ Customer blocked from protected chef route:', pathname);
+      // Allow access to auth pages for role switching
+      const authPages = ['/chef/login', '/chef/register', '/delivery/login', '/delivery/register'];
+      if (authPages.includes(pathname)) {
+        return NextResponse.next();
+      }
+      
+      // Block customer from protected chef and delivery routes
+      if (pathname.startsWith('/chef/') || pathname.startsWith('/delivery/')) {
+        console.log('❌ Customer blocked from protected route:', pathname);
         return NextResponse.redirect(new URL('/dashboard', request.url));
       }
     }
-
-    // ADMIN ROLE: Only allow admin routes
-    if (user.role === 'admin' && !pathname.startsWith('/admin/')) {
-      console.log('❌ Admin redirected to admin dashboard:', pathname);
-      return NextResponse.redirect(new URL('/admin', request.url));
-    }
   }
 
-  // SEPARATE PUBLIC ROUTES FOR EACH ROLE TYPE
+  // PUBLIC ROUTES AND AUTHENTICATION REDIRECTS
   const publicRoutes = ['/chef-services', '/', '/api/chef-services/chefs'];
-  const customerPublicRoutes = ['/login', '/register'];
-  const chefPublicRoutes = ['/chef/login', '/chef/register'];
-  const deliveryPublicRoutes = ['/delivery/login', '/delivery/register'];
-  const adminPublicRoutes = ['/admin/login', '/admin/register'];
+  const customerAuthRoutes = ['/login', '/register'];
+  const chefAuthRoutes = ['/chef/login', '/chef/register'];
+  const deliveryAuthRoutes = ['/delivery/login', '/delivery/register'];
   
   const isPublicRoute = publicRoutes.some(route => pathname === route || pathname.startsWith(route));
-  const isCustomerPublicRoute = customerPublicRoutes.some(route => pathname === route);
-  const isChefPublicRoute = chefPublicRoutes.some(route => pathname === route);
-  const isDeliveryPublicRoute = deliveryPublicRoutes.some(route => pathname === route);
-  const isAdminPublicRoute = adminPublicRoutes.some(route => pathname === route);
+  const isCustomerAuthRoute = customerAuthRoutes.some(route => pathname === route);
+  const isChefAuthRoute = chefAuthRoutes.some(route => pathname === route);
+  const isDeliveryAuthRoute = deliveryAuthRoutes.some(route => pathname === route);
 
-  // Allow all authenticated users to access any auth pages for role switching
-  // This enables users to logout and login as different roles
+  // Allow access to public routes and auth pages
+  if (isPublicRoute || isCustomerAuthRoute || isChefAuthRoute || isDeliveryAuthRoute) {
+    return NextResponse.next();
+  }
 
-  // ROLE-SPECIFIC PROTECTED ROUTES
-  const customerProtectedRoutes = ['/dashboard', '/profile', '/orders'];
-  const chefProtectedRoutes = ['/chef/dashboard'];
-  const deliveryProtectedRoutes = ['/delivery/dashboard'];
-  const adminProtectedRoutes = ['/admin/'];
-  
-  const isCustomerProtectedRoute = customerProtectedRoutes.some(route => pathname.startsWith(route));
-  const isChefProtectedRoute = chefProtectedRoutes.some(route => pathname.startsWith(route));
-  const isDeliveryProtectedRoute = deliveryProtectedRoutes.some(route => pathname.startsWith(route));
-  const isAdminProtectedRoute = adminProtectedRoutes.some(route => pathname.startsWith(route));
-
-  // Redirect unauthenticated users to appropriate login
+  // PROTECTED ROUTE REDIRECTS FOR UNAUTHENTICATED USERS
   if (!user) {
-    // Allow access to auth pages for all unauthenticated users
-    if (isCustomerPublicRoute || isChefPublicRoute || isDeliveryPublicRoute || isAdminPublicRoute) {
-      console.log('✅ Unauthenticated user allowed to access auth page:', pathname);
-      return NextResponse.next();
-    }
-    
-    // TEMPORARY: Allow all admin routes to pass through to prevent redirect loops
-    if (pathname.startsWith('/admin/')) {
-      console.log('✅ Temporarily allowing all admin routes to pass through');
-      return NextResponse.next();
-    }
-    
-    if (isChefProtectedRoute) {
+    // Redirect to appropriate login based on route
+    if (pathname.startsWith('/chef/')) {
       console.log('🔒 Redirecting to chef login');
       return NextResponse.redirect(new URL('/chef/login', request.url));
     }
     
-    if (isDeliveryProtectedRoute) {
+    if (pathname.startsWith('/delivery/')) {
       console.log('🔒 Redirecting to delivery login');
       return NextResponse.redirect(new URL('/delivery/login', request.url));
     }
     
-    if (isCustomerProtectedRoute) {
+    if (pathname.startsWith('/dashboard') || pathname.startsWith('/orders') || pathname.startsWith('/profile')) {
       console.log('🔒 Redirecting to customer login');
       return NextResponse.redirect(new URL('/login', request.url));
-    }
-    
-    if (isAdminProtectedRoute) {
-      // Prevent infinite redirect if already on admin login page or coming from it
-      if (pathname === '/admin/login') {
-        console.log('✅ Already on admin login page, allowing access');
-        return NextResponse.next();
-      }
-      
-      // Check if we're coming from admin login to prevent loops
-      const referer = request.headers.get('referer');
-      if (referer && referer.includes('/admin/login')) {
-        console.log('⚠️ Coming from admin login, allowing access to prevent loop');
-        return NextResponse.next();
-      }
-      
-      console.log('🔒 Redirecting to admin login');
-      return NextResponse.redirect(new URL('/admin/login', request.url));
     }
   }
 

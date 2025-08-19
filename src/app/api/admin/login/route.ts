@@ -135,7 +135,8 @@ export async function POST(request: NextRequest) {
     // Generate JWT token
     const token = generateToken(admin._id.toString(), 'admin');
 
-    return NextResponse.json({
+    // Create response with admin data
+    const response = NextResponse.json({
       message: 'Admin login successful',
       token,
       admin: {
@@ -145,6 +146,17 @@ export async function POST(request: NextRequest) {
         role: admin.role
       }
     });
+
+    // Set HTTP-only cookie for middleware to read
+    response.cookies.set('admin-token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 24 * 60 * 60 * 1000, // 24 hours
+      path: '/'
+    });
+
+    return response;
 
   } catch (error: any) {
     console.error('Admin login error:', error);

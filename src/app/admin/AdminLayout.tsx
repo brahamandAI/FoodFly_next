@@ -13,6 +13,7 @@ const navLinks = [
   { href: '/admin/order-assignments', label: 'Order Assignments' },
   { href: '/admin/users', label: 'Users' },
   { href: '/admin/restaurants', label: 'Restaurants' },
+  { href: '/admin/images', label: 'Images' },
   { href: '/admin/support', label: 'Support' },
   { href: '/admin/notifications', label: 'Notifications' },
   { href: '/admin/settings', label: 'Settings' },

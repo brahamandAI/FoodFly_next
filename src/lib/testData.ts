@@ -37,370 +37,546 @@ export const sampleAddresses: Address[] = [
   }
 ];
 
-// Comprehensive menu items for testing
+// Comprehensive menu items for Symposium Restaurant (rest_001)
 export const testMenuItems = {
-  // North Indian
+  // BAR MUNCHIES
   'item_001': {
     _id: 'item_001',
-    name: 'Butter Chicken',
-    description: 'Creamy tomato-based curry with tender chicken pieces',
-    price: 349,
-    image: '/images/categories/chicken.jpg',
-    category: 'Main Course',
-    isVeg: false,
-    rating: 4.8,
-    preparationTime: '25-30 mins',
-    restaurant: 'rest_001'
+    name: 'French Fries',
+    description: 'Crispy golden fries with choice of plain, peri peri, or cheesy seasoning',
+    price: 145,
+         image: 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?w=800&h=600&fit=crop',
+    category: 'Bar Munchies',
+    isVeg: true,
+    rating: 4.3,
+    preparationTime: '10-15 mins',
+    restaurant: 'rest_001',
+    variants: ['Plain', 'Peri Peri', 'Cheesy'],
+    variantPrices: [145, 195, 195]
   },
   'item_002': {
     _id: 'item_002',
-    name: 'Paneer Butter Masala',
-    description: 'Rich and creamy cottage cheese curry with aromatic spices',
-    price: 299,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Main Course',
+    name: 'Garlic Bread',
+    description: 'Toasted bread with garlic butter and herbs, available in plain or cheese',
+    price: 145,
+         image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
+    category: 'Bar Munchies',
     isVeg: true,
-    rating: 4.6,
-    preparationTime: '20-25 mins',
-    restaurant: 'rest_001'
+    rating: 4.2,
+    preparationTime: '8-12 mins',
+    restaurant: 'rest_001',
+    variants: ['Plain', 'Cheese'],
+    variantPrices: [145, 195]
   },
   'item_003': {
     _id: 'item_003',
-    name: 'Dal Makhani',
-    description: 'Slow-cooked black lentils in creamy tomato gravy',
-    price: 249,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Main Course',
-    isVeg: true,
+    name: 'Loaded Nachos',
+    description: 'Crispy tortilla chips topped with cheese, salsa, and choice of veg or chicken',
+    price: 195,
+         image: 'https://images.unsplash.com/photo-1546833999-b9f581a1996d?w=800&h=600&fit=crop',
+    category: 'Bar Munchies',
+    isVeg: false,
     rating: 4.5,
-    preparationTime: '20-25 mins',
-    restaurant: 'rest_001'
+    preparationTime: '12-18 mins',
+    restaurant: 'rest_001',
+    variants: ['Veg', 'Chicken'],
+    variantPrices: [195, 245]
   },
   'item_004': {
     _id: 'item_004',
-    name: 'Garlic Naan',
-    description: 'Soft bread with garlic and herbs',
-    price: 60,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Bread',
-    isVeg: true,
+    name: 'Bruschettas',
+    description: 'Toasted bread topped with fresh tomatoes and herbs, available in tomato or chicken',
+    price: 195,
+         image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
+    category: 'Bar Munchies',
+    isVeg: false,
     rating: 4.4,
+    preparationTime: '10-15 mins',
+    restaurant: 'rest_001',
+    variants: ['Tomato', 'Chicken'],
+    variantPrices: [195, 245]
+  },
+
+  // SOUPS
+  'item_005': {
+    _id: 'item_005',
+    name: 'Almond Broccoli Soup',
+    description: 'Creamy soup made with fresh broccoli and almonds',
+    price: 145,
+         image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&h=600&fit=crop',
+    category: 'Soups',
+    isVeg: true,
+    rating: 4.1,
+    preparationTime: '15-20 mins',
+    restaurant: 'rest_001'
+  },
+  'item_006': {
+    _id: 'item_006',
+    name: 'Cream of Tomato Soup',
+    description: 'Rich and creamy tomato soup, available in veg or chicken',
+    price: 145,
+         image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&h=600&fit=crop',
+    category: 'Soups',
+    isVeg: false,
+    rating: 4.3,
+    preparationTime: '12-18 mins',
+    restaurant: 'rest_001',
+    variants: ['Veg', 'Chicken'],
+    variantPrices: [145, 195]
+  },
+  'item_007': {
+    _id: 'item_007',
+    name: 'Manchow Soup',
+    description: 'Spicy and tangy soup with vegetables and noodles, available in veg or chicken',
+    price: 145,
+         image: 'https://images.unsplash.com/photo-1547592166-23ac45744acd?w=800&h=600&fit=crop',
+    category: 'Soups',
+    isVeg: false,
+    rating: 4.4,
+    preparationTime: '15-20 mins',
+    restaurant: 'rest_001',
+    variants: ['Veg', 'Chicken'],
+    variantPrices: [145, 195]
+  },
+
+  // SALAD STATION
+  'item_008': {
+    _id: 'item_008',
+    name: 'Greek Salad',
+    description: 'Fresh salad with olives, feta cheese, and Mediterranean vegetables',
+    price: 245,
+         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600&fit=crop',
+    category: 'Salad Station',
+    isVeg: false,
+    rating: 4.6,
+    preparationTime: '8-12 mins',
+    restaurant: 'rest_001',
+    variants: ['Veg', 'Chicken'],
+    variantPrices: [245, 275]
+  },
+  'item_009': {
+    _id: 'item_009',
+    name: 'Quinoa Apple Vinaigrette Salad',
+    description: 'Healthy quinoa salad with fresh apples and tangy vinaigrette',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=800&h=600&fit=crop',
+    category: 'Salad Station',
+    isVeg: true,
+    rating: 4.7,
     preparationTime: '10-15 mins',
     restaurant: 'rest_001'
   },
 
-  // Chinese
-  'item_005': {
-    _id: 'item_005',
-    name: 'Chicken Fried Rice',
-    description: 'Wok-tossed rice with chicken and vegetables',
-    price: 249,
-    image: '/images/categories/Chinese.jpg',
-    category: 'Rice',
-    isVeg: false,
-    rating: 4.3,
-    preparationTime: '18-25 mins',
-    restaurant: 'rest_002'
-  },
-  'item_006': {
-    _id: 'item_006',
-    name: 'Veg Hakka Noodles',
-    description: 'Stir-fried noodles with fresh vegetables',
-    price: 199,
-    image: '/images/categories/Chinese.jpg',
-    category: 'Noodles',
-    isVeg: true,
-    rating: 4.2,
-    preparationTime: '15-20 mins',
-    restaurant: 'rest_002'
-  },
-  'item_007': {
-    _id: 'item_007',
-    name: 'Honey Chilli Chicken',
-    description: 'Crispy chicken in sweet and spicy sauce',
-    price: 329,
-    image: '/images/categories/Chinese.jpg',
-    category: 'Appetizer',
-    isVeg: false,
-    rating: 4.5,
-    preparationTime: '20-25 mins',
-    restaurant: 'rest_002'
-  },
-
-  // Italian
-  'item_008': {
-    _id: 'item_008',
-    name: 'Margherita Pizza',
-    description: 'Classic pizza with tomato sauce, mozzarella, and basil',
-    price: 399,
-    image: '/images/categories/pizza-2.jpeg',
-    category: 'Pizza',
-    isVeg: true,
-    rating: 4.7,
-    preparationTime: '15-20 mins',
-    restaurant: 'rest_003'
-  },
-  'item_009': {
-    _id: 'item_009',
-    name: 'Pasta Carbonara',
-    description: 'Creamy pasta with eggs, cheese, and pancetta',
-    price: 349,
-    image: '/images/categories/pasta.jpg',
-    category: 'Pasta',
-    isVeg: false,
-    rating: 4.6,
-    preparationTime: '18-25 mins',
-    restaurant: 'rest_003'
-  },
-
-  // South Indian
+  // APPETIZERS - CONTINENTAL
   'item_010': {
     _id: 'item_010',
-    name: 'Masala Dosa',
-    description: 'Crispy crepe with spiced potato filling',
-    price: 149,
-    image: '/images/categories/South-indian.jpg',
-    category: 'Breakfast',
+    name: 'Mushroom Duplex',
+    description: 'Stuffed mushrooms with cheese and herbs',
+    price: 275,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Appetizers',
     isVeg: true,
-    rating: 4.5,
+    rating: 4.4,
     preparationTime: '15-20 mins',
-    restaurant: 'rest_004'
+    restaurant: 'rest_001'
   },
   'item_011': {
     _id: 'item_011',
-    name: 'Idli Sambar',
-    description: 'Steamed rice cakes with lentil curry',
-    price: 119,
-    image: '/images/categories/South-indian.jpg',
-    category: 'Breakfast',
-    isVeg: true,
-    rating: 4.4,
-    preparationTime: '12-18 mins',
-    restaurant: 'rest_004'
-  },
-
-  // Fast Food
-  'item_012': {
-    _id: 'item_012',
-    name: 'Chicken Burger',
-    description: 'Juicy chicken patty with lettuce and mayo',
-    price: 199,
-    image: '/images/categories/burger-2.jpg',
-    category: 'Burger',
+    name: 'Peri Peri Chicken Wings',
+    description: 'Spicy peri peri marinated chicken wings',
+    price: 375,
+         image: 'https://images.unsplash.com/photo-1567620832904-9fc6debc209f?w=800&h=600&fit=crop',
+    category: 'Appetizers',
     isVeg: false,
-    rating: 4.3,
-    preparationTime: '12-18 mins',
-    restaurant: 'rest_005'
-  },
-  'item_013': {
-    _id: 'item_013',
-    name: 'French Fries',
-    description: 'Crispy golden fries with seasoning',
-    price: 99,
-    image: '/images/categories/Fast-food.jpg',
-    category: 'Sides',
-    isVeg: true,
-    rating: 4.2,
-    preparationTime: '8-12 mins',
-    restaurant: 'rest_005'
-  },
-
-  // Beverages
-  'item_014': {
-    _id: 'item_014',
-    name: 'Mango Lassi',
-    description: 'Thick and creamy yogurt drink with fresh mango',
-    price: 129,
-    image: '/images/categories/Bevarages.jpg',
-    category: 'Beverages',
-    isVeg: true,
     rating: 4.6,
-    preparationTime: '5-8 mins',
-    restaurant: 'rest_001'
-  },
-  'item_015': {
-    _id: 'item_015',
-    name: 'Fresh Orange Juice',
-    description: 'Freshly squeezed orange juice',
-    price: 99,
-    image: '/images/categories/Bevarages.jpg',
-    category: 'Beverages',
-    isVeg: true,
-    rating: 4.4,
-    preparationTime: '3-5 mins',
-    restaurant: 'rest_001'
-  },
-
-  // Desserts
-  'item_016': {
-    _id: 'item_016',
-    name: 'Chocolate Cake',
-    description: 'Rich chocolate cake with truffle frosting',
-    price: 299,
-    image: '/images/categories/desserts.jpg',
-    category: 'Desserts',
-    isVeg: true,
-    rating: 4.7,
-    preparationTime: '5-10 mins',
-    restaurant: 'rest_003'
-  },
-  'item_017': {
-    _id: 'item_017',
-    name: 'Gulab Jamun',
-    description: 'Traditional Indian sweet balls in sugar syrup',
-    price: 149,
-    image: '/images/categories/desserts.jpg',
-    category: 'Desserts',
-    isVeg: true,
-    rating: 4.5,
-    preparationTime: '5-8 mins',
-    restaurant: 'rest_001'
-  },
-
-  // Menu items from category pages (name-based mapping)
-  'Dal Makhani': {
-    _id: 'dal_makhani',
-    name: 'Dal Makhani',
-    description: 'Slow-cooked black lentils in creamy tomato gravy',
-    price: 180,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Main Course Pure Veg',
-    isVeg: true,
-    rating: 4.5,
     preparationTime: '20-25 mins',
     restaurant: 'rest_001'
   },
-  'Shahi Paneer': {
-    _id: 'shahi_paneer',
-    name: 'Shahi Paneer',
-    description: 'Rich cottage cheese in royal gravy',
-    price: 200,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Main Course Pure Veg',
-    isVeg: true,
-    rating: 4.6,
-    preparationTime: '18-22 mins',
-    restaurant: 'rest_001'
-  },
-  'Kadhai Paneer': {
-    _id: 'kadhai_paneer',
-    name: 'Kadhai Paneer',
-    description: 'Cottage cheese cooked in kadhai with spices',
-    price: 210,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Main Course Pure Veg',
-    isVeg: true,
-    rating: 4.4,
-    preparationTime: '18-22 mins',
-    restaurant: 'rest_001'
-  },
-  'Butter Naan': {
-    _id: 'butter_naan',
-    name: 'Butter Naan',
-    description: 'Soft bread with butter',
-    price: 40,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Breads',
-    isVeg: true,
-    rating: 4.3,
-    preparationTime: '8-12 mins',
-    restaurant: 'rest_001'
-  },
-  'Garlic Naan': {
-    _id: 'garlic_naan',
-    name: 'Garlic Naan',
-    description: 'Soft bread with garlic and herbs',
-    price: 50,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Breads',
-    isVeg: true,
-    rating: 4.4,
-    preparationTime: '8-12 mins',
-    restaurant: 'rest_001'
-  },
-  'Tandoori Roti': {
-    _id: 'tandoori_roti',
-    name: 'Tandoori Roti',
-    description: 'Traditional Indian bread',
-    price: 25,
-    image: '/images/categories/North-indian.jpg',
-    category: 'Breads',
-    isVeg: true,
-    rating: 4.2,
-    preparationTime: '8-12 mins',
-    restaurant: 'rest_001'
-  },
-  'Veg Biryani': {
-    _id: 'veg_biryani',
-    name: 'Veg Biryani',
-    description: 'Fragrant rice with vegetables and spices',
-    price: 150,
-    image: '/images/categories/Mughlai.jpg',
-    category: 'Biryani & Rice',
-    isVeg: true,
-    rating: 4.3,
-    preparationTime: '25-30 mins',
-    restaurant: 'rest_001'
-  },
-  'Chicken Biryani': {
-    _id: 'chicken_biryani',
-    name: 'Chicken Biryani',
-    description: 'Aromatic rice with chicken and spices',
-    price: 180,
-    image: '/images/categories/Mughlai.jpg',
-    category: 'Biryani & Rice',
+  'item_012': {
+    _id: 'item_012',
+    name: 'Fish N Chips',
+    description: 'Crispy battered fish served with golden fries',
+    price: 445,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Appetizers',
     isVeg: false,
     rating: 4.5,
+    preparationTime: '18-25 mins',
+    restaurant: 'rest_001'
+  },
+
+  // APPETIZERS - ORIENTAL
+  'item_013': {
+    _id: 'item_013',
+    name: 'Classic Thai Spring Rolls',
+    description: 'Crispy spring rolls with fresh vegetables and Thai spices',
+    price: 245,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Appetizers',
+    isVeg: true,
+    rating: 4.3,
+    preparationTime: '12-18 mins',
+    restaurant: 'rest_001'
+  },
+  'item_014': {
+    _id: 'item_014',
+    name: 'Classic Chicken Dumplings',
+    description: 'Steamed or pan-tossed chicken dumplings with dipping sauce',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Appetizers',
+    isVeg: false,
+    rating: 4.5,
+    preparationTime: '15-20 mins',
+    restaurant: 'rest_001',
+    variants: ['Steamed', 'Pan Tossed'],
+    variantPrices: [345, 345]
+  },
+
+  // TANDOORI APPETIZERS
+  'item_015': {
+    _id: 'item_015',
+    name: 'Tandoori Chicken',
+    description: 'Marinated chicken cooked in traditional tandoor',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Appetizers',
+    isVeg: false,
+    rating: 4.7,
+    preparationTime: '25-30 mins',
+    restaurant: 'rest_001',
+    variants: ['Half', 'Full'],
+    variantPrices: [345, 595]
+  },
+  'item_016': {
+    _id: 'item_016',
+    name: 'Amritsari Fish Tikka',
+    description: 'Spiced fish tikka in traditional Amritsari style',
+    price: 525,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Appetizers',
+    isVeg: false,
+    rating: 4.6,
+    preparationTime: '20-25 mins',
+    restaurant: 'rest_001'
+  },
+
+  // CONTINENTAL MAINS
+  'item_017': {
+    _id: 'item_017',
+    name: 'Exotic Veg Stroganoff',
+    description: 'Creamy mushroom and vegetable stroganoff with rice',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Main Course',
+    isVeg: true,
+    rating: 4.4,
+    preparationTime: '20-25 mins',
+    restaurant: 'rest_001'
+  },
+  'item_018': {
+    _id: 'item_018',
+    name: 'Grilled Chicken Steak',
+    description: 'Juicy grilled chicken steak with herbs and spices',
+    price: 425,
+         image: 'https://images.unsplash.com/photo-1567620832904-9fc6debc209f?w=800&h=600&fit=crop',
+    category: 'Main Course',
+    isVeg: false,
+    rating: 4.6,
     preparationTime: '25-30 mins',
     restaurant: 'rest_001'
   },
-  'Mutton Biryani': {
-    _id: 'mutton_biryani',
-    name: 'Mutton Biryani',
-    description: 'Royal rice dish with tender mutton',
-    price: 220,
-    image: '/images/categories/Mughlai.jpg',
-    category: 'Biryani & Rice',
+
+  // SIZZLERS
+  'item_019': {
+    _id: 'item_019',
+    name: 'Cottage Cheese Sizzler',
+    description: 'Sizzling cottage cheese with choice of chipotle, peri peri, or BBQ sauce',
+    price: 425,
+         image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&h=600&fit=crop',
+    category: 'Sizzlers',
+    isVeg: true,
+    rating: 4.5,
+    preparationTime: '20-25 mins',
+    restaurant: 'rest_001',
+    variants: ['Chipotle', 'Peri Peri', 'BBQ'],
+    variantPrices: [425, 425, 425]
+  },
+  'item_020': {
+    _id: 'item_020',
+    name: 'Grilled Chicken Sizzler',
+    description: 'Sizzling grilled chicken with vegetables and sauce',
+    price: 475,
+         image: 'https://images.unsplash.com/photo-1567620832904-9fc6debc209f?w=800&h=600&fit=crop',
+    category: 'Sizzlers',
+    isVeg: false,
+    rating: 4.7,
+    preparationTime: '25-30 mins',
+    restaurant: 'rest_001'
+  },
+
+  // WOOD FIRED PIZZAS
+  'item_021': {
+    _id: 'item_021',
+    name: 'Classic Margherita',
+    description: 'Traditional pizza with tomato sauce, mozzarella, and basil',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&h=600&fit=crop',
+    category: 'Pizza',
+    isVeg: true,
+    rating: 4.6,
+    preparationTime: '15-20 mins',
+    restaurant: 'rest_001'
+  },
+  'item_022': {
+    _id: 'item_022',
+    name: 'Portugal Pepperoni Pizza',
+    description: 'Spicy pepperoni pizza with cheese and herbs',
+    price: 495,
+         image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&h=600&fit=crop',
+    category: 'Pizza',
+    isVeg: false,
+    rating: 4.5,
+    preparationTime: '18-25 mins',
+    restaurant: 'rest_001'
+  },
+  'item_023': {
+    _id: 'item_023',
+    name: 'Spicy Chicken Tikka Pizza',
+    description: 'Pizza topped with spicy chicken tikka and vegetables',
+    price: 495,
+         image: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?w=800&h=600&fit=crop',
+    category: 'Pizza',
+    isVeg: false,
+    rating: 4.7,
+    preparationTime: '20-25 mins',
+    restaurant: 'rest_001'
+  },
+
+  // SANDWICHES/BURGERS
+  'item_024': {
+    _id: 'item_024',
+    name: 'Club Sandwich',
+    description: 'Triple-decker sandwich with fresh vegetables and choice of veg or non-veg',
+    price: 245,
+         image: 'https://images.unsplash.com/photo-1528735602786-469f11261008?w=800&h=600&fit=crop',
+    category: 'Sandwiches',
+    isVeg: false,
+    rating: 4.3,
+    preparationTime: '12-18 mins',
+    restaurant: 'rest_001',
+    variants: ['Veg', 'Non-Veg'],
+    variantPrices: [245, 295]
+  },
+  'item_025': {
+    _id: 'item_025',
+    name: 'Peri Peri Chicken Burger',
+    description: 'Spicy peri peri chicken burger with fresh vegetables',
+    price: 295,
+         image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=800&h=600&fit=crop',
+    category: 'Burgers',
+    isVeg: false,
+    rating: 4.5,
+    preparationTime: '15-20 mins',
+    restaurant: 'rest_001'
+  },
+
+  // ORIENTAL MAINS
+  'item_026': {
+    _id: 'item_026',
+    name: 'Thai Red Curry Bowl',
+    description: 'Spicy Thai red curry with choice of vegetables, chicken, or prawns',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Main Course',
+    isVeg: false,
+    rating: 4.6,
+    preparationTime: '20-25 mins',
+    restaurant: 'rest_001',
+    variants: ['Veg', 'Chicken', 'Prawn'],
+    variantPrices: [345, 445, 545]
+  },
+  'item_027': {
+    _id: 'item_027',
+    name: 'Kung Pao Chicken',
+    description: 'Spicy and tangy chicken with peanuts and vegetables',
+    price: 395,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Main Course',
+    isVeg: false,
+    rating: 4.5,
+    preparationTime: '18-25 mins',
+    restaurant: 'rest_001'
+  },
+
+  // INDIAN MAINS
+  'item_028': {
+    _id: 'item_028',
+    name: 'Paneer Butter Masala',
+    description: 'Creamy and rich cottage cheese curry in tomato gravy',
+    price: 345,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Main Course',
+    isVeg: true,
+    rating: 4.7,
+    preparationTime: '20-25 mins',
+    restaurant: 'rest_001'
+  },
+  'item_029': {
+    _id: 'item_029',
+    name: 'Butter Chicken',
+    description: 'Creamy tomato-based curry with tender chicken, available bone or boneless',
+    price: 445,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Main Course',
+    isVeg: false,
+    rating: 4.8,
+    preparationTime: '25-30 mins',
+    restaurant: 'rest_001',
+    variants: ['Bone', 'Boneless'],
+    variantPrices: [445, 445]
+  },
+  'item_030': {
+    _id: 'item_030',
+    name: 'Kashmiri Josh-e-Rogan',
+    description: 'Traditional Kashmiri mutton curry with aromatic spices',
+    price: 545,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Main Course',
     isVeg: false,
     rating: 4.6,
     preparationTime: '30-35 mins',
     restaurant: 'rest_001'
   },
-  'Veg Noodles': {
-    _id: 'veg_noodles',
-    name: 'Veg Noodles',
-    description: 'Stir-fried noodles with vegetables',
-    price: 120,
-    image: '/images/categories/Chinese.jpg',
-    category: 'Noodles',
-    isVeg: true,
-    rating: 4.2,
-    preparationTime: '15-20 mins',
-    restaurant: 'rest_002'
-  },
-  'Chicken Noodles': {
-    _id: 'chicken_noodles',
-    name: 'Chicken Noodles',
-    description: 'Noodles with chicken and vegetables',
-    price: 150,
-    image: '/images/categories/Chinese.jpg',
-    category: 'Noodles',
+
+  // RICE/BIRYANI
+  'item_031': {
+    _id: 'item_031',
+    name: 'Hyderabadi Chicken Dum Biryani',
+    description: 'Traditional Hyderabadi biryani with tender chicken and aromatic rice',
+    price: 545,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Rice & Biryani',
     isVeg: false,
-    rating: 4.3,
-    preparationTime: '15-20 mins',
-    restaurant: 'rest_002'
+    rating: 4.8,
+    preparationTime: '30-35 mins',
+    restaurant: 'rest_001'
   },
-  'Schezwan Noodles': {
-    _id: 'schezwan_noodles',
-    name: 'Schezwan Noodles',
-    description: 'Spicy Schezwan style noodles',
-    price: 140,
-    image: '/images/categories/Chinese.jpg',
-    category: 'Noodles',
-    isVeg: true,
+  'item_032': {
+    _id: 'item_032',
+    name: 'Chicken Fried Rice',
+    description: 'Wok-tossed rice with chicken and vegetables',
+    price: 295,
+         image: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=800&h=600&fit=crop',
+    category: 'Rice & Biryani',
+    isVeg: false,
     rating: 4.4,
     preparationTime: '15-20 mins',
-    restaurant: 'rest_002'
+    restaurant: 'rest_001'
+  },
+
+  // BREADS
+  'item_033': {
+    _id: 'item_033',
+    name: 'Garlic Naan',
+    description: 'Soft bread with garlic and herbs',
+    price: 75,
+         image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
+    category: 'Breads',
+    isVeg: true,
+    rating: 4.3,
+    preparationTime: '8-12 mins',
+    restaurant: 'rest_001'
+  },
+  'item_034': {
+    _id: 'item_034',
+    name: 'Cheese Chilly Naan',
+    description: 'Naan stuffed with cheese and green chillies',
+    price: 95,
+         image: 'https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=800&h=600&fit=crop',
+    category: 'Breads',
+    isVeg: true,
+    rating: 4.5,
+    preparationTime: '10-15 mins',
+    restaurant: 'rest_001'
+  },
+
+  // DESSERTS
+  'item_035': {
+    _id: 'item_035',
+    name: 'Cheesecake',
+    description: 'Creamy New York style cheesecake',
+    price: 245,
+         image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=800&h=600&fit=crop',
+    category: 'Desserts',
+    isVeg: true,
+    rating: 4.6,
+    preparationTime: '5-10 mins',
+    restaurant: 'rest_001'
+  },
+  'item_036': {
+    _id: 'item_036',
+    name: 'Tiramisu',
+    description: 'Classic Italian dessert with coffee and mascarpone',
+    price: 325,
+         image: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=800&h=600&fit=crop',
+    category: 'Desserts',
+    isVeg: true,
+    rating: 4.7,
+    preparationTime: '5-10 mins',
+    restaurant: 'rest_001'
+  },
+
+  // BEVERAGES - MOCKTAILS
+  'item_037': {
+    _id: 'item_037',
+    name: 'Virgin Mojito',
+    description: 'Refreshing mint and lime mocktail',
+    price: 145,
+         image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&h=600&fit=crop',
+    category: 'Beverages',
+    isVeg: true,
+    rating: 4.4,
+    preparationTime: '5-8 mins',
+    restaurant: 'rest_001'
+  },
+  'item_038': {
+    _id: 'item_038',
+    name: 'Sip of Sunshine',
+    description: 'Fresh orange and pineapple mocktail',
+    price: 195,
+         image: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?w=800&h=600&fit=crop',
+    category: 'Beverages',
+    isVeg: true,
+    rating: 4.3,
+    preparationTime: '5-8 mins',
+    restaurant: 'rest_001'
+  },
+
+  // BEVERAGES - SHAKES
+  'item_039': {
+    _id: 'item_039',
+    name: 'Chocolate Shake',
+    description: 'Rich and creamy chocolate milkshake',
+    price: 195,
+         image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=800&h=600&fit=crop',
+    category: 'Beverages',
+    isVeg: true,
+    rating: 4.5,
+    preparationTime: '5-8 mins',
+    restaurant: 'rest_001'
+  },
+  'item_040': {
+    _id: 'item_040',
+    name: 'Brownie Shake',
+    description: 'Chocolate shake with brownie pieces',
+    price: 195,
+         image: 'https://images.unsplash.com/photo-1572490122747-3968b75cc699?w=800&h=600&fit=crop',
+    category: 'Beverages',
+    isVeg: true,
+    rating: 4.6,
+    preparationTime: '8-12 mins',
+    restaurant: 'rest_001'
   }
 };
 

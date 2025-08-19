@@ -82,27 +82,71 @@ export default function HomePage() {
   const mockRestaurants: Restaurant[] = [
     {
       _id: 'rest_001',
-      name: 'Pizza Palace',
-      cuisine: ['Italian', 'Fast Food'],
-      rating: 4.5,
-      deliveryTime: '25-35 mins',
-      minimumOrder: 200,
-      deliveryFee: 40,
-      image: '/images/categories/pizza-2.jpeg',
-      address: { city: 'Mumbai', area: 'Bandra' },
+      name: 'Symposium Restaurant',
+      cuisine: ['Multi-Cuisine', 'Continental', 'Indian', 'Oriental'],
+      rating: 4.7,
+      deliveryTime: '30-40 mins',
+      minimumOrder: 300,
+      deliveryFee: 50,
+      image: '/images/categories/restaurant-panache.jpg',
+      address: { city: 'Mumbai', area: 'Andheri' },
       isActive: true,
-      offers: ['20% off on orders above ₹500'],
+      offers: ['Free Dessert on orders above ₹800'],
       menu: [
         {
-          _id: 'item_001',
-          name: 'Margherita Pizza',
-          description: 'Fresh tomatoes, mozzarella cheese, basil',
-          price: 299,
-          image: '/images/categories/pizza-2.jpeg',
+          _id: 'symp_001',
+          name: 'Butter Chicken',
+          description: 'Creamy tomato-based curry with tender chicken',
+          price: 445,
+          image: '/images/categories/butter-chicken.jpg',
+          category: 'Main Course',
+          isVeg: false,
+          rating: 4.8,
+          preparationTime: '25-30 mins'
+        },
+        {
+          _id: 'symp_002',
+          name: 'Paneer Butter Masala',
+          description: 'Creamy cottage cheese curry in rich tomato gravy',
+          price: 345,
+          image: '/images/categories/paneer-butter-masala.jpg',
+          category: 'Main Course',
+          isVeg: true,
+          rating: 4.7,
+          preparationTime: '20-25 mins'
+        },
+        {
+          _id: 'symp_003',
+          name: 'Classic Margherita Pizza',
+          description: 'Traditional pizza with tomato, mozzarella, and basil',
+          price: 345,
+          image: '/images/categories/margherita-pizza.jpg',
           category: 'Pizza',
           isVeg: true,
           rating: 4.6,
           preparationTime: '15-20 mins'
+        },
+        {
+          _id: 'symp_004',
+          name: 'Hyderabadi Chicken Biryani',
+          description: 'Traditional Hyderabadi biryani with tender chicken',
+          price: 545,
+          image: '/images/categories/chicken-biryani.jpg',
+          category: 'Rice & Biryani',
+          isVeg: false,
+          rating: 4.8,
+          preparationTime: '30-35 mins'
+        },
+        {
+          _id: 'symp_005',
+          name: 'Tiramisu',
+          description: 'Classic Italian dessert with coffee and mascarpone',
+          price: 325,
+          image: '/images/categories/tiramisu.jpg',
+          category: 'Desserts',
+          isVeg: true,
+          rating: 4.7,
+          preparationTime: '5-10 mins'
         }
       ]
     },
@@ -118,21 +162,111 @@ export default function HomePage() {
       address: { city: 'Mumbai', area: 'Powai' },
       isActive: true,
       offers: ['Buy 1 Get 1 Free on Burgers'],
-      menu: []
+      menu: [
+        {
+          _id: 'burger_001',
+          name: 'Classic Beef Burger',
+          description: 'Juicy beef patty with lettuce, tomato, and cheese',
+          price: 199,
+          image: '/images/categories/burger-2.jpg',
+          category: 'Burgers',
+          isVeg: false,
+          rating: 4.4,
+          preparationTime: '12-18 mins'
+        },
+        {
+          _id: 'burger_002',
+          name: 'Chicken Burger',
+          description: 'Grilled chicken patty with fresh vegetables',
+          price: 179,
+          image: '/images/categories/burger-2.jpg',
+          category: 'Burgers',
+          isVeg: false,
+          rating: 4.3,
+          preparationTime: '10-15 mins'
+        },
+        {
+          _id: 'burger_003',
+          name: 'Veggie Burger',
+          description: 'Plant-based patty with lettuce and tomato',
+          price: 159,
+          image: '/images/categories/burger-2.jpg',
+          category: 'Burgers',
+          isVeg: true,
+          rating: 4.2,
+          preparationTime: '10-15 mins'
+        }
+      ]
     },
     {
       _id: 'rest_003',
-      name: 'Spice Garden',
-      cuisine: ['Indian', 'North Indian'],
+      name: 'Restaurant Panache',
+      cuisine: ['Multi-Cuisine', 'Continental', 'Indian', 'Oriental'],
       rating: 4.7,
       deliveryTime: '30-40 mins',
-      minimumOrder: 250,
+      minimumOrder: 300,
       deliveryFee: 50,
-      image: '/images/categories/North-indian.jpg',
+      image: '/images/categories/restaurant-panache.jpg',
       address: { city: 'Mumbai', area: 'Andheri' },
       isActive: true,
-      offers: ['Free Dessert on orders above ₹600'],
-      menu: []
+      offers: ['Free Dessert on orders above ₹800'],
+      menu: [
+        {
+          _id: 'panache_001',
+          name: 'Butter Chicken',
+          description: 'Creamy tomato-based curry with tender chicken',
+          price: 445,
+          image: '/images/categories/butter-chicken.jpg',
+          category: 'Main Course',
+          isVeg: false,
+          rating: 4.8,
+          preparationTime: '25-30 mins'
+        },
+        {
+          _id: 'panache_002',
+          name: 'Paneer Butter Masala',
+          description: 'Creamy cottage cheese curry in rich tomato gravy',
+          price: 345,
+          image: '/images/categories/paneer-butter-masala.jpg',
+          category: 'Main Course',
+          isVeg: true,
+          rating: 4.7,
+          preparationTime: '20-25 mins'
+        },
+        {
+          _id: 'panache_003',
+          name: 'Classic Margherita Pizza',
+          description: 'Traditional pizza with tomato, mozzarella, and basil',
+          price: 345,
+          image: '/images/categories/margherita-pizza.jpg',
+          category: 'Pizza',
+          isVeg: true,
+          rating: 4.6,
+          preparationTime: '15-20 mins'
+        },
+        {
+          _id: 'panache_004',
+          name: 'Hyderabadi Chicken Biryani',
+          description: 'Traditional Hyderabadi biryani with tender chicken',
+          price: 545,
+          image: '/images/categories/chicken-biryani.jpg',
+          category: 'Rice & Biryani',
+          isVeg: false,
+          rating: 4.8,
+          preparationTime: '30-35 mins'
+        },
+        {
+          _id: 'panache_005',
+          name: 'Tiramisu',
+          description: 'Classic Italian dessert with coffee and mascarpone',
+          price: 325,
+          image: '/images/categories/tiramisu.jpg',
+          category: 'Desserts',
+          isVeg: true,
+          rating: 4.7,
+          preparationTime: '5-10 mins'
+        }
+      ]
     }
   ];
 
@@ -565,49 +699,44 @@ export default function HomePage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-            {/* Symposium World Cuisine */}
-            <a 
-              href="https://www.google.com/maps/place/Symposium+World+Cuisine/@28.5844,77.0474,17z"
-              target="_blank"
-              rel="noopener noreferrer"
+            {/* Symposium Restaurant */}
+            <Link 
+              href="/restaurant/3"
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
               <div className="relative h-40 sm:h-48">
                   <Image
                   src="/images/restaurants/symposium.jpg"
-                  alt="Symposium World Cuisine"
+                  alt="Symposium Restaurant"
                   fill
                   className="object-cover"
                   priority
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
-                  <h3 className="text-white text-lg sm:text-2xl font-bold">Symposium World Cuisine</h3>
-                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.5 (500+ reviews)</p>
+                  <h3 className="text-white text-lg sm:text-2xl font-bold">Symposium Restaurant</h3>
+                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.7 (800+ reviews)</p>
                 </div>
               </div>
               <div className="p-4 sm:p-6">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-xs sm:text-sm">101, First Floor, City Centre Mall, Sector 12 Dwarka, New Delhi, Delhi 110075</p>
+                      <p className="text-gray-600 text-xs sm:text-sm">Andheri, Mumbai</p>
                       <p className="text-gray-500 text-xs sm:text-sm mt-1">Open • 11:00 AM - 11:00 PM</p>
                       <div className="flex items-center gap-1 sm:gap-2 mt-2 flex-wrap">
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Open Now</span>
-                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">15% Off</span>
-                        <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs rounded-full">Fine Dining</span>
+                        <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">Multi-Cuisine</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
 
             {/* Panache */}
-            <a 
-              href="https://www.google.com/maps/place/Panache/@28.5844,77.0474,17z"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link 
+              href="/restaurant/1"
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
               <div className="relative h-40 sm:h-48">
@@ -621,30 +750,28 @@ export default function HomePage() {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
                 <div className="absolute bottom-4 left-4 right-4">
                   <h3 className="text-white text-lg sm:text-2xl font-bold">Panache</h3>
-                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.3 (300+ reviews)</p>
+                  <p className="text-white/90 text-xs sm:text-sm">⭐ 4.5 (300+ reviews)</p>
                 </div>
               </div>
               <div className="p-4 sm:p-6">
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-xs sm:text-sm">Sector 17, Dwarka, New Delhi</p>
+                      <p className="text-gray-600 text-xs sm:text-sm">Downtown</p>
                       <p className="text-gray-500 text-xs sm:text-sm mt-1">Open • 12:00 PM - 11:00 PM</p>
                       <div className="flex items-center gap-1 sm:gap-2 mt-2 flex-wrap">
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Open Now</span>
-                        <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Family Dining</span>
+                        <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs rounded-full">Multi-Cuisine</span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
 
             {/* Cafe After Hours */}
-            <a 
-              href="https://www.google.com/maps/place/Cafe+After+Hours/@28.5844,77.0474,17z"
-              target="_blank"
-              rel="noopener noreferrer"
+            <Link 
+              href="/restaurant/2"
               className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 cursor-pointer"
             >
               <div className="relative h-40 sm:h-48">
@@ -665,7 +792,7 @@ export default function HomePage() {
                 <div className="space-y-3 sm:space-y-4">
                   <div className="flex items-start gap-3">
                     <div className="flex-1">
-                      <p className="text-gray-600 text-xs sm:text-sm">Sector 12, Dwarka, New Delhi</p>
+                      <p className="text-gray-600 text-xs sm:text-sm">City Center</p>
                       <p className="text-gray-500 text-xs sm:text-sm mt-1">Open • 11:00 AM - 12:00 AM</p>
                       <div className="flex items-center gap-1 sm:gap-2 mt-2 flex-wrap">
                         <span className="px-2 py-1 bg-green-100 text-green-800 text-xs rounded-full">Open Now</span>
@@ -675,7 +802,7 @@ export default function HomePage() {
                   </div>
                 </div>
               </div>
-            </a>
+            </Link>
           </div>
 
           <div className="text-center mt-8 sm:mt-12">

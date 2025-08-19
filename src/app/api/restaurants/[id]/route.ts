@@ -14,7 +14,7 @@ export async function GET(
     const restaurants = {
       '1': {
         id: '1',
-        name: 'Spice Garden',
+        name: 'Panache',
         cuisine: 'Indian',
         rating: 4.5,
         deliveryTime: '30-45 mins',
@@ -54,7 +54,7 @@ export async function GET(
       },
       '2': {
         id: '2',
-        name: 'Pizza Palace',
+        name: 'Cafe After Hours',
         cuisine: 'Italian',
         rating: 4.2,
         deliveryTime: '25-35 mins',
@@ -86,33 +86,41 @@ export async function GET(
       },
       '3': {
         id: '3',
-        name: 'Burger Junction',
-        cuisine: 'American',
-        rating: 4.0,
-        deliveryTime: '20-30 mins',
-        deliveryFee: 30,
+        name: 'Symposium Restaurant',
+        cuisine: 'Multi-Cuisine',
+        rating: 4.7,
+        deliveryTime: '30-40 mins',
+        deliveryFee: 50,
         image: '/images/restaurants/symposium.jpg',
-        location: 'Mall Road',
+        location: 'Andheri, Mumbai',
         isOpen: true,
-        description: 'Fresh burgers and sandwiches',
-        address: '789 Burger Lane, Mall Road',
+        description: 'Multi-cuisine restaurant with traditional and modern dishes',
+        address: '789 Food Street, Andheri, Mumbai',
         phone: '+1234567892',
         menu: [
           {
-            id: 'classic-burger',
-            name: 'Classic Burger',
-            description: 'Beef patty with lettuce, tomato, and cheese',
-            price: 220,
-            category: 'Burgers',
-            image: '/images/categories/burger-2.jpg'
+            id: 'butter-chicken',
+            name: 'Butter Chicken',
+            description: 'Creamy tomato-based curry with tender chicken',
+            price: 280,
+            category: 'North Indian',
+            image: '/images/categories/chicken.jpg'
           },
           {
-            id: 'chicken-sandwich',
-            name: 'Chicken Sandwich',
-            description: 'Grilled chicken with mayo and vegetables',
+            id: 'dal-makhani',
+            name: 'Dal Makhani',
+            description: 'Rich and creamy black lentils',
             price: 180,
-            category: 'Sandwiches',
-            image: '/images/categories/sandwhich.jpg'
+            category: 'North Indian',
+            image: '/images/categories/North-indian.jpg'
+          },
+          {
+            id: 'masala-dosa',
+            name: 'Masala Dosa',
+            description: 'Crispy rice crepe filled with spiced potato',
+            price: 120,
+            category: 'South Indian',
+            image: '/images/categories/South-indian.jpg'
           }
         ]
       }

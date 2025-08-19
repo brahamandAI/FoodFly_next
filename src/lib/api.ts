@@ -1158,17 +1158,30 @@ export const getCurrentUser = () => {
 
 export const logout = () => {
   try {
-    // Try to invalidate server session (customer)
-    const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || sessionStorage.getItem('token')) : null;
-    if (typeof window !== 'undefined') {
+    // Check if this is an admin logout
+    const adminToken = typeof window !== 'undefined' ? localStorage.getItem('adminToken') : null;
+    const isAdminLogout = !!adminToken;
+
+    if (isAdminLogout) {
+      // Admin logout - call admin logout API to clear admin cookie
       try {
-        if (token) {
-          fetch('/api/auth/user-logout', {
-            method: 'POST',
-            headers: { 'Authorization': `Bearer ${token}` },
-          }).catch(() => {});
-        }
+        fetch('/api/admin/logout', {
+          method: 'POST',
+        }).catch(() => {});
       } catch {}
+    } else {
+      // Regular user logout - try to invalidate server session (customer)
+      const token = typeof window !== 'undefined' ? (localStorage.getItem('token') || sessionStorage.getItem('token')) : null;
+      if (typeof window !== 'undefined') {
+        try {
+          if (token) {
+            fetch('/api/auth/user-logout', {
+              method: 'POST',
+              headers: { 'Authorization': `Bearer ${token}` },
+            }).catch(() => {});
+          }
+        } catch {}
+      }
     }
 
     // Clear localStorage
@@ -1178,6 +1191,8 @@ export const logout = () => {
       localStorage.removeItem('userEmail');
       localStorage.removeItem('isLoggedIn');
       localStorage.removeItem('guest');
+      localStorage.removeItem('adminToken');
+      localStorage.removeItem('adminUser');
 
       // Clear sessionStorage
       sessionStorage.removeItem('token');
@@ -1187,6 +1202,7 @@ export const logout = () => {
       // Clear cookies
       document.cookie = 'token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
       document.cookie = 'user=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
+      document.cookie = 'admin-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
     }
     
     // Clear axios headers
@@ -1199,9 +1215,13 @@ export const logout = () => {
 
     console.log('Logout completed - cleared all auth data');
 
-    // Redirect to home page
+    // Redirect based on logout type
     if (typeof window !== 'undefined') {
-      window.location.href = '/';
+      if (isAdminLogout) {
+        window.location.href = '/admin/login';
+      } else {
+        window.location.href = '/';
+      }
     }
   } catch (error) {
     console.error('Logout error:', error);

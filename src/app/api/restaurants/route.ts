@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
     const restaurants = [
       {
         id: '1',
-        name: 'Spice Garden',
+        name: 'Panache',
         cuisine: 'Indian',
         rating: 4.5,
         deliveryTime: '30-45 mins',
@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
       },
       {
         id: '2',
-        name: 'Pizza Palace',
+        name: 'Cafe After Hours',
         cuisine: 'Italian',
         rating: 4.2,
         deliveryTime: '25-35 mins',
@@ -63,35 +63,6 @@ export async function GET(request: NextRequest) {
             price: 280,
             category: 'Pasta',
             image: '/images/categories/pasta.jpg'
-          }
-        ]
-      },
-      {
-        id: '3',
-        name: 'Burger Junction',
-        cuisine: 'American',
-        rating: 4.0,
-        deliveryTime: '20-30 mins',
-        deliveryFee: 30,
-        image: '/images/restaurants/symposium.jpg',
-        location: 'Mall Road',
-        isOpen: true,
-        menu: [
-          {
-            id: 'classic-burger',
-            name: 'Classic Burger',
-            description: 'Beef patty with lettuce, tomato, and cheese',
-            price: 220,
-            category: 'Burgers',
-            image: '/images/categories/burger-2.jpg'
-          },
-          {
-            id: 'chicken-sandwich',
-            name: 'Chicken Sandwich',
-            description: 'Grilled chicken with mayo and vegetables',
-            price: 180,
-            category: 'Sandwiches',
-            image: '/images/categories/sandwhich.jpg'
           }
         ]
       }

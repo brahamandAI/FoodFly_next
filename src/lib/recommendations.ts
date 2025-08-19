@@ -609,19 +609,27 @@ class SmartRecommendationEngine {
     return [
       {
         _id: 'rest_001',
-        name: `${dish} House`,
+        name: 'Symposium Restaurant',
         price: this.getAvgPrice(dish),
-        rating: 4.3 + Math.random() * 0.7,
-        deliveryTime: '25-35 mins',
-        deliveryFee: 40
+        rating: 4.7,
+        deliveryTime: '30-40 mins',
+        deliveryFee: 50
       },
       {
         _id: 'rest_002', 
-        name: `Royal ${dish}`,
+        name: 'Panache',
         price: this.getAvgPrice(dish) + 50,
-        rating: 4.5 + Math.random() * 0.5,
-        deliveryTime: '30-40 mins',
-        deliveryFee: 50
+        rating: 4.5,
+        deliveryTime: '30-45 mins',
+        deliveryFee: 40
+      },
+      {
+        _id: 'rest_003', 
+        name: 'Cafe After Hours',
+        price: this.getAvgPrice(dish) + 30,
+        rating: 4.2,
+        deliveryTime: '25-35 mins',
+        deliveryFee: 35
       }
     ];
   }

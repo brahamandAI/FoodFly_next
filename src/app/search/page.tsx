@@ -94,7 +94,7 @@ function SearchPageContent() {
       rating: 4.5,
       nutritionScore: 72,
       restaurantId: 'rest_001',
-      restaurantName: 'Pizza Palace'
+      restaurantName: 'Cafe After Hours'
     },
     {
       _id: 'item_002',

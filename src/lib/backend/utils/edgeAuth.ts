@@ -39,12 +39,13 @@ export class EdgeAuthValidator {
     }
   }
 
-  // Get user from any token type (regular, chef, delivery)
+  // Get user from any token type (regular, chef, delivery, admin)
   static getUserFromRequest(request: NextRequest): { isValid: boolean; user?: any; error?: string } {
     // Try all token sources
     const regularToken = request.cookies.get('token')?.value;
     const chefToken = request.cookies.get('chef-token')?.value;
     const deliveryToken = request.cookies.get('delivery-token')?.value;
+    const adminToken = request.cookies.get('admin-token')?.value;
     
     // Also check Authorization header
     const authHeader = request.headers.get('authorization');
@@ -55,13 +56,14 @@ export class EdgeAuthValidator {
       hasRegularToken: !!regularToken,
       hasChefToken: !!chefToken,
       hasDeliveryToken: !!deliveryToken,
+      hasAdminToken: !!adminToken,
       hasHeaderToken: !!headerToken,
       regularTokenLength: regularToken?.length || 0,
       headerTokenLength: headerToken?.length || 0
     });
 
-    // Try tokens in order of preference
-    const tokens = [headerToken, chefToken, deliveryToken, regularToken].filter(Boolean);
+    // Try tokens in order of preference (admin first for admin routes)
+    const tokens = [headerToken, adminToken, chefToken, deliveryToken, regularToken].filter(Boolean);
     
     for (const token of tokens) {
       if (token) {
@@ -139,6 +141,27 @@ export class EdgeAuthValidator {
     // Ensure this is not a chef or delivery token
     if (result.user?.role === 'chef' || result.user?.role === 'delivery') {
       return { isValid: false, error: 'Use role-specific login endpoint' };
+    }
+
+    return result;
+  }
+
+  // Validate admin-specific token
+  static validateAdminToken(request: NextRequest): { isValid: boolean; user?: any; error?: string } {
+    const token = request.cookies.get('admin-token')?.value || 
+                 request.headers.get('authorization')?.replace('Bearer ', '');
+
+    if (!token) {
+      return { isValid: false, error: 'No admin token provided' };
+    }
+
+    const result = this.validateToken(token);
+    if (!result.isValid) {
+      return result;
+    }
+
+    if (result.user?.role !== 'admin') {
+      return { isValid: false, error: 'Not an admin token' };
     }
 
     return result;
