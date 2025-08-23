@@ -22,10 +22,10 @@ export async function POST(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
-    const customerId = decoded.userId;
+    const customerId = (decoded as any).userId;
 
     const body = await request.json();
-    const {
+    let {
       chefId,
       eventType,
       eventDate,
@@ -41,24 +41,55 @@ export async function POST(request: NextRequest) {
 
     // Validate required fields
     if (!chefId || !eventType || !eventDate || !eventTime || !duration || !guestCount || !venue) {
+      console.error('Missing required fields:', { chefId, eventType, eventDate, eventTime, duration, guestCount, venue });
       return NextResponse.json(
         { 
           success: false,
-          error: 'Missing required booking details' 
+          error: 'Missing required booking details. Please ensure all fields are filled.',
+          details: {
+            chefId: !chefId ? 'Chef ID is required' : null,
+            eventType: !eventType ? 'Event type is required' : null,
+            eventDate: !eventDate ? 'Event date is required' : null,
+            eventTime: !eventTime ? 'Event time is required' : null,
+            duration: !duration ? 'Duration is required' : null,
+            guestCount: !guestCount ? 'Guest count is required' : null,
+            venue: !venue ? 'Venue details are required' : null
+          }
         },
         { status: 400 }
       );
     }
 
-    // Validate cuisine array
-    if (!cuisine || !Array.isArray(cuisine) || cuisine.length === 0) {
+    // Validate venue structure
+    if (!venue.address || !venue.address.street || !venue.address.city || !venue.address.state || !venue.address.zipCode) {
+      console.error('Invalid venue structure:', venue);
       return NextResponse.json(
         { 
           success: false,
-          error: 'Please select at least one cuisine' 
+          error: 'Invalid venue details. Please provide complete address information.',
+          details: {
+            address: !venue.address ? 'Address object is required' : null,
+            street: !venue.address?.street ? 'Street address is required' : null,
+            city: !venue.address?.city ? 'City is required' : null,
+            state: !venue.address?.state ? 'State is required' : null,
+            zipCode: !venue.address?.zipCode ? 'Zip code is required' : null
+          }
         },
         { status: 400 }
       );
+    }
+
+    // Validate cuisine array - make it more flexible
+    if (!cuisine) {
+      cuisine = ['Indian']; // Default cuisine if none provided
+    }
+    
+    if (!Array.isArray(cuisine)) {
+      cuisine = [cuisine]; // Convert single string to array
+    }
+    
+    if (cuisine.length === 0) {
+      cuisine = ['Indian']; // Default cuisine if empty array
     }
 
     // Get chef details
@@ -96,15 +127,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Ensure customer has required fields
+    // Ensure customer has required fields - make phone number flexible
     if (!customer.phone) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Customer phone number is required. Please update your profile.' 
-        },
-        { status: 400 }
-      );
+      console.log('Customer missing phone number, but continuing with booking');
+      // Don't block the booking if phone is missing, just log it
     }
 
     // Check for existing bookings on the same date
@@ -164,10 +190,18 @@ export async function POST(request: NextRequest) {
         eventTime,
         duration,
         guestCount,
-        specialRequests,
+        specialRequests: specialRequests || '',
         dietaryRestrictions: (dietaryRestrictions || []).map(restriction => restriction.toLowerCase()),
         cuisine: Array.isArray(cuisine) ? cuisine : [cuisine],
-        venue
+        venue: {
+          type: venue.type || 'customer_home',
+          address: {
+            street: venue.address.street,
+            city: venue.address.city,
+            state: venue.address.state,
+            zipCode: venue.address.zipCode
+          }
+        }
       },
       pricing: {
         basePrice,
@@ -253,6 +287,30 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Handle MongoDB duplicate key errors
+    if (error.code === 11000) {
+      console.error('Duplicate key error:', error);
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'A booking already exists for this chef on the selected date and time.'
+        },
+        { status: 409 }
+      );
+    }
+
+    // Handle cast errors (invalid ObjectId)
+    if (error.name === 'CastError') {
+      console.error('Cast error:', error);
+      return NextResponse.json(
+        { 
+          success: false,
+          error: 'Invalid data format. Please check your input and try again.'
+        },
+        { status: 400 }
+      );
+    }
+
     return NextResponse.json(
       { 
         success: false,
@@ -281,7 +339,7 @@ export async function GET(request: NextRequest) {
     }
 
     const decoded = verifyToken(token);
-    const userId = decoded.userId;
+    const userId = (decoded as any).userId;
 
     const url = new URL(request.url);
     const status = url.searchParams.get('status');

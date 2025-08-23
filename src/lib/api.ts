@@ -275,7 +275,7 @@ export const unifiedCartService = {
   },
 
   // Add item to cart
-  addToCart: async (menuItemId: string, name: string, description: string, price: number, quantity: number, image: string, restaurantId: string, restaurantName: string, customizations: any[] = []): Promise<void> => {
+  addToCart: async (menuItemId: string, name: string, description: string, price: number, quantity: number, image: string, restaurantId: string, restaurantName: string, customizations: any[] = [], isVeg: boolean = true, category: string = 'Main Course'): Promise<void> => {
     console.log('Adding to cart:', { menuItemId, name, quantity, isAuthenticated: unifiedCartService.isAuthenticated() });
     
     if (unifiedCartService.isAuthenticated()) {
@@ -299,7 +299,9 @@ export const unifiedCartService = {
           image,
           restaurantId,
           restaurantName,
-          customizations
+          customizations,
+          isVeg,
+          category
         }),
       });
 
@@ -313,7 +315,7 @@ export const unifiedCartService = {
     } else {
       // Use localStorage for guests and unauthenticated users
       console.log('Using localStorage cart for guest user');
-      unifiedCartService.addToLocalCart(menuItemId, name, description, price, quantity, image, restaurantId, restaurantName, customizations);
+      unifiedCartService.addToLocalCart(menuItemId, name, description, price, quantity, image, restaurantId, restaurantName, customizations, isVeg, category);
     }
 
     // Trigger cart update event
@@ -321,7 +323,7 @@ export const unifiedCartService = {
   },
 
   // Add item to localStorage cart
-  addToLocalCart: (menuItemId: string, name: string, description: string, price: number, quantity: number, image: string, restaurantId: string, restaurantName: string, customizations: any[] = []): void => {
+  addToLocalCart: (menuItemId: string, name: string, description: string, price: number, quantity: number, image: string, restaurantId: string, restaurantName: string, customizations: any[] = [], isVeg: boolean = true, category: string = 'Main Course'): void => {
     try {
       const userId = unifiedCartService.getCurrentUserId();
       const cartKey = `cart_${userId}`;
@@ -351,6 +353,8 @@ export const unifiedCartService = {
           restaurantId,
           restaurantName,
           customizations: customizations || [],
+          isVeg: isVeg !== undefined ? isVeg : true,
+          category: category || 'Main Course',
           addedAt: new Date().toISOString()
         };
         cart.items.push(newItem);
@@ -553,7 +557,9 @@ export const unifiedCartService = {
                     item.image || '',
                     item.restaurantId,
                     item.restaurantName,
-                    item.customizations || []
+                    item.customizations || [],
+                    item.isVeg,
+                    item.category
                   );
                   migratedItemsCount++;
                 } catch (error) {

@@ -25,7 +25,7 @@ export async function POST(request: NextRequest) {
     const customerId = (decoded as any).userId;
 
     const body = await request.json();
-    const {
+    let {
       eventType,
       eventDate,
       eventTime,
@@ -50,15 +50,17 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate cuisine array
-    if (!cuisine || !Array.isArray(cuisine) || cuisine.length === 0) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Please select at least one cuisine' 
-        },
-        { status: 400 }
-      );
+    // Validate cuisine array - make it more flexible
+    if (!cuisine) {
+      cuisine = ['Indian']; // Default cuisine if none provided
+    }
+    
+    if (!Array.isArray(cuisine)) {
+      cuisine = [cuisine]; // Convert single string to array
+    }
+    
+    if (cuisine.length === 0) {
+      cuisine = ['Indian']; // Default cuisine if empty array
     }
 
     // Get customer details
@@ -80,15 +82,10 @@ export async function POST(request: NextRequest) {
       phone: customer.phone
     });
 
-    // Ensure customer has required fields
+    // Ensure customer has required fields - make phone number flexible
     if (!customer.phone) {
-      return NextResponse.json(
-        { 
-          success: false,
-          error: 'Customer phone number is required. Please update your profile.' 
-        },
-        { status: 400 }
-      );
+      console.log('Customer missing phone number, but continuing with general request');
+      // Don't block the request if phone is missing, just log it
     }
 
     // Validate event date (must be in future)

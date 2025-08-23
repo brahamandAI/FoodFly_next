@@ -8,7 +8,6 @@ import {
   Filter, 
   Star, 
   MapPin, 
-  DollarSign, 
   ChefHat, 
   Calendar, 
   Users, 
@@ -16,18 +15,17 @@ import {
   Heart,
   Phone,
   Mail,
-  Award,
-  Sparkles
+  Award
 } from 'lucide-react';
 import { toast } from 'react-hot-toast';
-import { Cormorant_Garamond, Dancing_Script } from 'next/font/google';
+import { Playfair_Display, Dancing_Script, Cormorant_Garamond } from 'next/font/google';
 
+const playfair = Playfair_Display({ subsets: ['latin'] });
+const dancingScript = Dancing_Script({ subsets: ['latin'] });
 const cormorant = Cormorant_Garamond({ 
   weight: ['400', '600'],
   subsets: ['latin'] 
 });
-
-const dancingScript = Dancing_Script({ subsets: ['latin'] });
 
 interface Chef {
   _id: string;
@@ -146,9 +144,9 @@ export default function ChefServicesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900 flex items-center justify-center">
+      <div className="min-h-screen bg-black flex items-center justify-center">
         <div className="text-center">
-          <ChefHat className="h-12 w-12 text-orange-500 mx-auto mb-4 animate-spin" />
+          <ChefHat className="h-12 w-12 text-red-500 mx-auto mb-4 animate-spin" />
           <p className="text-gray-300">Loading amazing chefs...</p>
         </div>
       </div>
@@ -156,73 +154,60 @@ export default function ChefServicesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
-      {/* Hero Section */}
-      <section className="relative bg-gradient-to-r from-gray-800 via-gray-900 to-gray-800 py-20 border-b border-gray-700">
-        <div className="absolute inset-0">
-          <Image
-            src="/images/hero-burger.jpg"
-            alt="Chef Services Hero"
-            fill
-            className="object-cover opacity-30"
-            priority
-          />
-        </div>
-        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <div className="flex items-center justify-center space-x-3 mb-6">
-            <ChefHat className="h-16 w-16 text-orange-500" />
-            <div className="flex items-center space-x-2">
-              <Image
-                src="/images/logo.png"
-                alt="FoodFly"
-                width={48}
-                height={48}
-                className="rounded-lg"
-              />
-              <span className={`${cormorant.className} text-3xl font-semibold text-white tracking-wider`}>FoodFly</span>
-            </div>
-          </div>
-          <h1 className={`${cormorant.className} text-5xl md:text-7xl font-semibold text-white mb-4 tracking-wider uppercase`}>
-            <span className="text-orange-400">Personal</span> Chef Services
-          </h1>
-          <p className={`${dancingScript.className} text-2xl md:text-3xl text-gray-200 mb-4 flex items-center justify-center gap-3`}>
-            Culinary Excellence <Sparkles className="w-8 h-8 text-orange-500 fill-current animate-pulse" /> at Your Service
-          </p>
-          <p className="text-lg md:text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Book professional chefs for your special events, parties, and celebrations.
-            Enjoy restaurant-quality cuisine in the comfort of your own space.
-          </p>
-          <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4">
-            <Link
-              href="/chef-services/book"
-              className="bg-gradient-to-r from-orange-500 to-red-500 text-white font-semibold py-4 px-8 rounded-full hover:from-orange-600 hover:to-red-600 transition duration-300 transform hover:scale-105 shadow-lg"
-            >
-              Book a Chef Now
-            </Link>
-            <Link
-              href="/chef/register"
-              className="border-2 border-orange-500 text-orange-400 font-semibold py-4 px-8 rounded-full hover:bg-orange-500 hover:text-white transition duration-300 transform hover:scale-105"
-            >
-              Become a Chef Partner
-            </Link>
-          </div>
-          
-          {/* Chef Login Link */}
-          <div className="mt-6 text-center">
-            <p className="text-gray-300 text-lg mb-3">Already a chef partner?</p>
-            <Link
-              href="/chef/login"
-              className="inline-flex items-center space-x-2 text-orange-400 hover:text-orange-300 font-medium text-lg transition-colors"
-            >
-              <ChefHat className="h-5 w-5" />
-              <span>Chef Login</span>
-            </Link>
-          </div>
-        </div>
-      </section>
+    <div className="min-h-screen bg-black">
+             {/* Hero Section */}
+       <section className="relative min-h-[500px] py-16 bg-black">
+         <Image
+           src="/images/hero-burger.jpg"
+           alt="Chef Services Hero"
+           fill
+           className="object-cover opacity-50"
+           priority
+         />
+         <div className="absolute inset-0 flex items-center justify-center">
+           <div className="text-center text-white px-4">
+             <h1 className={`${cormorant.className} text-4xl md:text-6xl lg:text-7xl font-semibold mb-4 tracking-wider uppercase`}>
+               <span className="text-red-500">P</span>ersonal Chef Services
+             </h1>
+             <p className={`${dancingScript.className} text-2xl md:text-3xl lg:text-4xl text-gray-200 flex items-center justify-center gap-3 w-full max-w-2xl mx-auto mb-4`}>
+               Made with <Heart className="w-6 h-6 md:w-8 md:h-8 text-red-500 fill-current animate-pulse" /> passion
+             </p>
+             <p className="text-base md:text-lg lg:text-xl text-gray-300 mt-4 max-w-3xl mx-auto mb-8">
+               Book professional chefs for your special events, parties, and celebrations.
+               Enjoy restaurant-quality cuisine in the comfort of your own space.
+             </p>
+             <div className="flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-4 mb-8">
+               <Link
+                 href="/chef-services/book"
+                 className="bg-yellow-500 text-black font-semibold py-3 px-8 rounded-lg hover:bg-yellow-400 transition duration-300 transform hover:scale-105 shadow-lg"
+               >
+                 Book a Chef Now
+               </Link>
+               <Link
+                 href="/chef/register"
+                 className="border-2 border-yellow-500 text-yellow-400 font-semibold py-3 px-8 rounded-lg hover:bg-yellow-500 hover:text-black transition duration-300 transform hover:scale-105"
+               >
+                 Become a Chef Partner
+               </Link>
+             </div>
+             
+             {/* Chef Login Link */}
+             <div className="text-center">
+               <p className="text-gray-300 text-base md:text-lg mb-3">Already a chef partner?</p>
+               <Link
+                 href="/chef/login"
+                 className="inline-flex items-center space-x-2 text-yellow-400 hover:text-yellow-300 font-medium text-base md:text-lg transition-colors"
+               >
+                 <ChefHat className="h-4 w-4 md:h-5 md:w-5" />
+                 <span>Chef Login</span>
+               </Link>
+             </div>
+           </div>
+         </div>
+       </section>
 
       {/* Search and Filters */}
-      <div className="bg-gray-900 border-b border-gray-800">
+      <div className="bg-black border-b border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
             {/* Search */}
@@ -233,14 +218,14 @@ export default function ChefServicesPage() {
                 placeholder="Search chefs, cuisines, or dishes..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-3 border border-gray-700 rounded-lg bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
+                className="w-full pl-10 pr-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500 focus:border-red-500 transition-all"
               />
             </div>
 
             {/* Filter Toggle */}
             <button
               onClick={() => setShowFilters(!showFilters)}
-              className="flex items-center space-x-2 px-4 py-3 border border-gray-700 rounded-lg bg-gray-800 text-white hover:bg-gray-700 transition-colors"
+              className="flex items-center space-x-2 px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white hover:bg-gray-800 transition-colors"
             >
               <Filter className="h-5 w-5" />
               <span>Filters</span>
@@ -253,7 +238,7 @@ export default function ChefServicesPage() {
               <select
                 value={selectedCity}
                 onChange={(e) => setSelectedCity(e.target.value)}
-                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-800 text-white focus:ring-2 focus:ring-red-500"
+                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-900 text-white focus:ring-2 focus:ring-red-500"
               >
                 <option value="">All Cities</option>
                 {filters.cities.map(city => (
@@ -264,7 +249,7 @@ export default function ChefServicesPage() {
               <select
                 value={selectedCuisine}
                 onChange={(e) => setSelectedCuisine(e.target.value)}
-                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-800 text-white focus:ring-2 focus:ring-red-500"
+                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-900 text-white focus:ring-2 focus:ring-red-500"
               >
                 <option value="">All Cuisines</option>
                 {filters.cuisines.map(cuisine => (
@@ -277,7 +262,7 @@ export default function ChefServicesPage() {
                 placeholder="Min Price (₹)"
                 value={priceRange.min}
                 onChange={(e) => setPriceRange(prev => ({ ...prev, min: e.target.value }))}
-                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500"
+                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-900 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500"
               />
 
               <input
@@ -285,7 +270,7 @@ export default function ChefServicesPage() {
                 placeholder="Max Price (₹)"
                 value={priceRange.max}
                 onChange={(e) => setPriceRange(prev => ({ ...prev, max: e.target.value }))}
-                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-800 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500"
+                className="border border-gray-700 rounded-lg px-3 py-3 bg-gray-900 text-white placeholder-gray-400 focus:ring-2 focus:ring-red-500"
               />
             </div>
           )}
@@ -300,7 +285,7 @@ export default function ChefServicesPage() {
               Available Chefs
             </h2>
             <div className="flex items-center space-x-4">
-              <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white px-6 py-2 rounded-full font-bold text-lg shadow-lg">
+              <div className="bg-yellow-500 text-black px-6 py-2 rounded-lg font-bold text-lg shadow-lg">
                 {filteredChefs.length} {filteredChefs.length === 1 ? 'Chef' : 'Chefs'} Found
               </div>
               <div className="text-gray-300 text-sm">
@@ -389,7 +374,7 @@ export default function ChefServicesPage() {
                   {/* Price Range */}
                   <div className="flex items-center justify-between mb-4">
                     <div className="flex items-center space-x-2 text-lg font-semibold text-white">
-                      <span className="text-green-400">💰</span>
+                      <span className="text-green-400">₹</span>
                       <span>₹{chef.chefProfile.priceRange.min.toLocaleString()} - ₹{chef.chefProfile.priceRange.max.toLocaleString()}</span>
                     </div>
                   </div>
@@ -398,13 +383,13 @@ export default function ChefServicesPage() {
                   <div className="flex space-x-2">
                     <Link
                       href={`/chef-services/book?chef=${chef._id}`}
-                      className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 text-white py-2 px-4 rounded-lg text-center hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+                      className="flex-1 bg-yellow-500 text-black py-2 px-4 rounded-lg text-center hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105 font-semibold"
                     >
                       Book Now
                     </Link>
                     <button
                       onClick={() => setSelectedChef(chef)}
-                      className="px-4 py-2 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300"
+                      className="px-4 py-2 border border-yellow-500 rounded-lg text-yellow-400 hover:bg-yellow-500 hover:text-black transition-all duration-300"
                     >
                       View Details
                     </button>
@@ -425,7 +410,7 @@ export default function ChefServicesPage() {
                 setSelectedCuisine('');
                 setPriceRange({ min: '', max: '' });
               }}
-              className="bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-6 rounded-lg hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+              className="bg-yellow-500 text-black py-3 px-6 rounded-lg hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105 font-semibold"
             >
               Clear Filters
             </button>
@@ -540,14 +525,14 @@ export default function ChefServicesPage() {
                 <div className="flex space-x-4 pt-4">
                   <Link
                     href={`/chef-services/book?chef=${selectedChef._id}`}
-                    className="flex-1 bg-gradient-to-r from-red-500 to-orange-500 text-white py-3 px-6 rounded-lg text-center hover:from-red-600 hover:to-orange-600 transition-all duration-300 transform hover:scale-105"
+                    className="flex-1 bg-yellow-500 text-black py-3 px-6 rounded-lg text-center hover:bg-yellow-400 transition-all duration-300 transform hover:scale-105 font-semibold"
                     onClick={() => setSelectedChef(null)}
                   >
                     Book This Chef
                   </Link>
                   <button
                     onClick={() => setSelectedChef(null)}
-                    className="px-6 py-3 border border-gray-700 rounded-lg text-gray-300 hover:bg-gray-800 hover:text-white transition-all duration-300"
+                    className="px-6 py-3 border border-yellow-500 rounded-lg text-yellow-400 hover:bg-yellow-500 hover:text-black transition-all duration-300"
                   >
                     Close
                   </button>

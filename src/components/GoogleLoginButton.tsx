@@ -10,16 +10,21 @@ interface GoogleLoginButtonProps {
   onError?: (error: string) => void;
   text?: string;
   className?: string;
+  isLoading?: boolean;
 }
 
 export default function GoogleLoginButton({ 
   onSuccess, 
   onError, 
   text = "Continue with Google",
-  className = ""
+  className = "",
+  isLoading: propIsLoading = false
 }: GoogleLoginButtonProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
+
+  // Combine prop loading state with internal loading state
+  const isButtonLoading = isLoading || propIsLoading;
 
   // Check if Google OAuth is properly configured
   const clientId = process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID;
@@ -77,35 +82,26 @@ export default function GoogleLoginButton({
         tokenLength: data.token?.length || 0
       });
 
-      // Trigger auth state change events with a slight delay to ensure storage is set
-      setTimeout(() => {
-        // Trigger storage event for header update
-        window.dispatchEvent(new StorageEvent('storage', {
-          key: 'isLoggedIn',
-          newValue: 'true'
-        }));
+      // Immediately trigger auth state change events
+      window.dispatchEvent(new StorageEvent('storage', {
+        key: 'isLoggedIn',
+        newValue: 'true'
+      }));
 
-        // Additional event to ensure all components are notified
-        window.dispatchEvent(new CustomEvent('authStateChanged', {
-          detail: { isLoggedIn: true, user: data.user, source: 'google' }
-        }));
+      // Additional event to ensure all components are notified
+      window.dispatchEvent(new CustomEvent('authStateChanged', {
+        detail: { isLoggedIn: true, user: data.user, source: 'google' }
+      }));
 
-        // Force refresh auth state to ensure all components are updated
-        refreshAuthState();
+      // Force refresh auth state to ensure all components are updated
+      refreshAuthState();
 
-        // Debug: Check if cookies are set
-        console.log('🔍 Google login - Checking cookies after set:', {
-          tokenCookie: document.cookie.includes('token='),
-          userCookie: document.cookie.includes('user='),
-          allCookies: document.cookie
-        });
-
-        // Force a page reload to ensure all components pick up the new auth state
-        const currentPath = window.location.pathname;
-        if (currentPath === '/login' || currentPath === '/') {
-          window.location.reload();
-        }
-      }, 200);
+      // Debug: Check if cookies are set
+      console.log('🔍 Google login - Checking cookies after set:', {
+        tokenCookie: document.cookie.includes('token='),
+        userCookie: document.cookie.includes('user='),
+        allCookies: document.cookie
+      });
 
       // Migrate guest cart and load user cart from database
       try {
@@ -117,7 +113,18 @@ export default function GoogleLoginButton({
       }
 
       toast.success(data.message || 'Successfully signed in with Google!');
+      
+      // Call onSuccess immediately to close the popup
       onSuccess();
+
+      // Force a page reload only if on login page or home page to ensure smooth transition
+      const currentPath = window.location.pathname;
+      if (currentPath === '/login' || currentPath === '/') {
+        // Small delay to ensure the popup closes first
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
 
     } catch (error: any) {
       console.error('Google login error:', error);
@@ -176,7 +183,7 @@ export default function GoogleLoginButton({
           type="standard"
           context="signin"
         />
-        {isLoading && (
+        {isButtonLoading && (
           <div className="absolute inset-0 bg-white/80 rounded-xl flex items-center justify-center">
             <div className="flex items-center space-x-2">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-blue-600"></div>

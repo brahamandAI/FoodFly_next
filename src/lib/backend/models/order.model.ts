@@ -8,6 +8,8 @@ export interface IOrderItem {
   quantity: number;
   customizations?: string[];
   image?: string;
+  isVeg?: boolean;
+  category?: string;
 }
 
 export interface IOrderStatusHistory {
@@ -99,7 +101,9 @@ const OrderItemSchema = new Schema<IOrderItem>({
     min: 1
   },
   customizations: [String],
-  image: String
+  image: String,
+  isVeg: Boolean,
+  category: String
 });
 
 const OrderStatusHistorySchema = new Schema<IOrderStatusHistory>({

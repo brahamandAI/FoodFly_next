@@ -55,6 +55,11 @@ export default function ClientLayout({
     const handleAuthChange = (e: CustomEvent) => {
       const { isLoggedIn } = e.detail || {};
       setIsAuthenticated(!!isLoggedIn);
+      
+      // Automatically close auth popup if user becomes authenticated
+      if (isLoggedIn && showAuthPopup) {
+        setShowAuthPopup(false);
+      }
     };
 
     window.addEventListener('authStateChanged', handleAuthChange as EventListener);
@@ -63,7 +68,7 @@ export default function ClientLayout({
       window.removeEventListener('authStateChanged', handleAuthChange as EventListener);
       clearInterval(authCheckInterval);
     };
-  }, []);
+  }, [showAuthPopup]);
 
   const handleCloseAuthPopup = () => {
     setShowAuthPopup(false);
@@ -72,6 +77,13 @@ export default function ClientLayout({
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
     setShowAuthPopup(false);
+    
+    // Additional check to ensure popup is closed
+    setTimeout(() => {
+      if (showAuthPopup) {
+        setShowAuthPopup(false);
+      }
+    }, 100);
   };
 
   const handleShowAuthPopup = () => {

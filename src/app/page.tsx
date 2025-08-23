@@ -9,6 +9,7 @@ import SmartRecommendations from '../components/SmartRecommendations';
 import VoiceAssistant from '../components/VoiceAssistant';
 import AuthPopup from '../components/AuthPopup';
 import LocationSelector from '../components/LocationSelector';
+
 import { toast } from 'react-hot-toast';
 import { logout } from '@/lib/api';
 import SignupPopup from '../components/SignupPopup';

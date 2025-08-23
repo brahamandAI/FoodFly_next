@@ -14,6 +14,7 @@ interface AuthPopupProps {
 export default function AuthPopup({ onClose, onSuccess }: AuthPopupProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -38,6 +39,24 @@ export default function AuthPopup({ onClose, onSuccess }: AuthPopupProps) {
       return;
     }
   }, [onClose, onSuccess]);
+
+  // Monitor authentication state changes
+  useEffect(() => {
+    const handleAuthChange = (e: CustomEvent) => {
+      const { isLoggedIn } = e.detail || {};
+      if (isLoggedIn) {
+        // User became authenticated, close popup and call success
+        onSuccess();
+        onClose();
+      }
+    };
+
+    window.addEventListener('authStateChanged', handleAuthChange as EventListener);
+    
+    return () => {
+      window.removeEventListener('authStateChanged', handleAuthChange as EventListener);
+    };
+  }, [onSuccess, onClose]);
 
   const validateForm = () => {
     const newErrors: {[key: string]: string} = {};
@@ -161,8 +180,22 @@ export default function AuthPopup({ onClose, onSuccess }: AuthPopupProps) {
   };
 
   const handleGoogleLoginSuccess = () => {
+    // Show loading state for smooth transition
+    setIsGoogleLoading(true);
+    
+    // Immediately close the popup and trigger success
     onSuccess();
     onClose();
+    
+    // Trigger auth state change events to ensure all components are updated
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'isLoggedIn',
+      newValue: 'true'
+    }));
+    
+    window.dispatchEvent(new CustomEvent('authStateChanged', {
+      detail: { isLoggedIn: true, source: 'google' }
+    }));
   };
 
   const testApiConnection = async () => {
@@ -208,6 +241,17 @@ export default function AuthPopup({ onClose, onSuccess }: AuthPopupProps) {
   return (
     <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-2 sm:p-4">
       <div className="modal-content-light rounded-2xl w-full max-w-md relative transform transition-all shadow-2xl mx-2 sm:mx-0 max-h-[95vh] overflow-y-auto">
+        {/* Loading overlay for Google authentication */}
+        {isGoogleLoading && (
+          <div className="absolute inset-0 bg-white/90 rounded-2xl flex items-center justify-center z-10">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
+              <p className="text-gray-700 font-medium">Signing in with Google...</p>
+              <p className="text-gray-500 text-sm mt-2">Please wait while we set up your account</p>
+            </div>
+          </div>
+        )}
+        
         {/* Close button */}
         <button
           onClick={onClose}
@@ -366,6 +410,7 @@ export default function AuthPopup({ onClose, onSuccess }: AuthPopupProps) {
             <GoogleLoginButton
               onSuccess={handleGoogleLoginSuccess}
               text={isLogin ? "Sign in with Google" : "Sign up with Google"}
+              isLoading={isGoogleLoading}
             />
 
             <div className="relative my-6">

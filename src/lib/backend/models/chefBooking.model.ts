@@ -116,7 +116,6 @@ const ChefBookingSchema = new Schema<IChefBooking>({
   bookingDetails: {
     eventType: {
       type: String,
-      enum: ['private_dining', 'catering', 'cooking_class', 'meal_prep', 'consultation'],
       required: true
     },
     eventDate: {
@@ -146,8 +145,7 @@ const ChefBookingSchema = new Schema<IChefBooking>({
       maxlength: 500
     },
     dietaryRestrictions: [{
-      type: String,
-      enum: ['vegetarian', 'vegan', 'gluten-free', 'dairy-free', 'nut-free', 'halal', 'kosher', 'keto', 'paleo']
+      type: String
     }],
     cuisine: [{
       type: String,
@@ -156,7 +154,6 @@ const ChefBookingSchema = new Schema<IChefBooking>({
     venue: {
       type: {
         type: String,
-        enum: ['customer_home', 'chef_location', 'external_venue'],
         required: true
       },
       address: {

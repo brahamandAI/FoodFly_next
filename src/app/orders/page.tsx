@@ -175,8 +175,8 @@ export default function OrdersPage() {
           _id: o._id,
           orderNumber: o.orderNumber,
           restaurant: {
-            _id: o.restaurant?._id || 'default-restaurant',
-            name: o.restaurant?.name || 'Restaurant',
+            _id: o.restaurant?._id || o.restaurantId || 'default-restaurant',
+            name: o.restaurant?.name || o.restaurantName || 'Restaurant',
             image: '/images/restaurants/cafe.jpg',
             phone: '+91 9876543210',
             address: {

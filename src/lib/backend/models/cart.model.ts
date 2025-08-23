@@ -7,6 +7,8 @@ export interface ICartItem {
   price: number;
   quantity: number;
   image?: string;
+  isVeg?: boolean;
+  category?: string;
   restaurantId: string;
   restaurantName: string;
   customizations?: string[];
@@ -50,6 +52,8 @@ const CartItemSchema = new Schema<ICartItem>({
     max: 10 // Maximum 10 items of same type
   },
   image: String,
+  isVeg: Boolean,
+  category: String,
   restaurantId: {
     type: String,
     required: true

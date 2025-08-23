@@ -82,10 +82,10 @@ export async function GET(
           _id: item.menuItemId || item._id,
           name: item.name,
           price: item.price,
-          image: '/images/placeholder.svg', // Default image
-          isVeg: true, // Default value
+          image: item.image || '/images/placeholder.svg', // Use actual image from order
+          isVeg: item.isVeg !== undefined ? item.isVeg : true, // Use actual isVeg from order if available
           description: item.description,
-          category: 'Main Course' // Default category
+          category: item.category || 'Main Course' // Use actual category from order if available
         },
         quantity: item.quantity,
         price: item.price,

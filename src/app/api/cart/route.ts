@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     // Verify authentication
     const user = verifyToken(request);
     
-    const { menuItemId, name, description, price, quantity, image, restaurantId, restaurantName, customizations } = await request.json();
+    const { menuItemId, name, description, price, quantity, image, restaurantId, restaurantName, customizations, isVeg, category } = await request.json();
 
     if (!menuItemId || !name || !price || !quantity || !restaurantId || !restaurantName) {
       return NextResponse.json(
@@ -117,6 +117,8 @@ export async function POST(request: NextRequest) {
         restaurantId,
         restaurantName,
         customizations: customizations || [],
+        isVeg: isVeg !== undefined ? isVeg : true,
+        category: category || 'Main Course',
         addedAt: new Date()
       });
     }

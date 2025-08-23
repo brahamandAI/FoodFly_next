@@ -50,9 +50,54 @@
   }
 }
 
+@keyframes slide-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .animate-fade-in {
   animation: fade-in 0.6s ease-out;
 }
+
+.animate-slide-in-up {
+  animation: slide-in-up 0.8s ease-out;
+}
+
+.animate-scale-in {
+  animation: scale-in 0.5s ease-out;
+}
+
+/* Restaurant Menu Grid Animations */
+.restaurant-grid-item {
+  animation: slide-in-up 0.6s ease-out;
+  animation-fill-mode: both;
+}
+
+.restaurant-grid-item:nth-child(1) { animation-delay: 0.1s; }
+.restaurant-grid-item:nth-child(2) { animation-delay: 0.2s; }
+.restaurant-grid-item:nth-child(3) { animation-delay: 0.3s; }
+.restaurant-grid-item:nth-child(4) { animation-delay: 0.4s; }
+.restaurant-grid-item:nth-child(5) { animation-delay: 0.5s; }
+.restaurant-grid-item:nth-child(6) { animation-delay: 0.6s; }
+.restaurant-grid-item:nth-child(7) { animation-delay: 0.7s; }
+.restaurant-grid-item:nth-child(8) { animation-delay: 0.8s; }
 
 /* Mobile Responsive Improvements */
 @layer utilities {

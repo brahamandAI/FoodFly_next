@@ -114,6 +114,18 @@ export async function POST(request: NextRequest) {
     const restaurantId = items[0]?.restaurantId || 'default-restaurant';
     const restaurantName = items[0]?.restaurantName || 'Restaurant';
 
+    // Validate that all items are from the same restaurant
+    const allItemsFromSameRestaurant = items.every(item => 
+      item.restaurantId === restaurantId && item.restaurantName === restaurantName
+    );
+
+    if (!allItemsFromSameRestaurant) {
+      return NextResponse.json(
+        { error: 'All items must be from the same restaurant' },
+        { status: 400 }
+      );
+    }
+
     // Calculate order totals
     const subtotal = items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
     const deliveryFee = subtotal >= 300 ? 0 : 40; // Free delivery above ₹300
@@ -137,7 +149,10 @@ export async function POST(request: NextRequest) {
         description: item.description || '',
         price: item.price,
         quantity: item.quantity,
-        customizations: item.customizations || []
+        customizations: item.customizations || [],
+        image: item.image || '/images/placeholder.svg',
+        isVeg: item.isVeg !== undefined ? item.isVeg : true,
+        category: item.category || 'Main Course'
       })),
       subtotal,
       deliveryFee,

@@ -9,6 +9,7 @@ export interface CartItem {
   image?: string;
   description?: string;
   isVeg?: boolean;
+  category?: string;
   restaurantId?: string;
   restaurantName?: string;
 }
@@ -74,6 +75,7 @@ class CartService {
           image: item.image,
           description: item.description,
           isVeg: item.isVeg,
+          category: item.category,
           restaurantId: item.restaurantId,
           restaurantName: item.restaurantName
         });
